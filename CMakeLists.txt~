@@ -1,5 +1,5 @@
 # project name
-project (brutus)
+project (game)
 
 # the oldest stable cmake version we support
 cmake_minimum_required (VERSION 2.6)
@@ -7,7 +7,7 @@ cmake_minimum_required (VERSION 2.6)
 # where we install data directory (if we have any)
 set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
 
-set (EXEC_NAME ${CMAKE_PROJECT_NAME})
+set (EXEC_NAME "brutus")
 set (RELEASE_NAME "conspiracy")
 set (VERSION "0.1")
 

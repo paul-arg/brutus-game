@@ -21,7 +21,6 @@ int Tile::getX() const
 	return x;
 }
 
-
 int Tile::getY() const
 {
 	return y;

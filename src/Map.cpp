@@ -11,16 +11,16 @@ using namespace std;
 Map::Map(int mapHeightInput, int mapWidthInput)
 : mapHeight(mapHeightInput), mapWidth(mapWidthInput)
 {
-	mapData = new Tile**[mapHeight];
-	for (int i = 0; i < mapHeight; i++)
+	mapData = new Tile**[mapWidth];
+	for (int i = 0; i < mapWidth; i++)
 	{
-		mapData[i] = new Tile*[mapWidth];
+		mapData[i] = new Tile*[mapHeight];
 	}
 
 	// Null out the pointers contained in the array:
-	for (int i = 0; i < mapHeight; i++)
+	for (int i = 0; i < mapWidth; i++)
 	{
-		for (int j = 0; j < mapWidth; j++)
+		for (int j = 0; j < mapHeight; j++)
 		{
 			mapData[i][j] = nullptr;
 		}
@@ -118,9 +118,9 @@ void Map::fillWith(Tile::Terrain paint)
 {
 	int i;
 	int j;
-	for (int i = 0; i < mapHeight; i++)
+	for (int i = 0; i < mapWidth; i++)
 	{
-		for (int j = 0; j < mapWidth; j++)
+		for (int j = 0; j < mapHeight; j++)
 		{
 			if(mapData[i][j] == nullptr)
 			{

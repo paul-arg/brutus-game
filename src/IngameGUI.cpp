@@ -16,9 +16,7 @@ b4("Rock"),
 b5("Water"),
 b6("Fish"),
 b7("Tiles"),
-b8("Building"),
-b9("Button 9"),
-b10("Button 10")
+b8("Building")
 {
 	Gtk::RadioButton::Group group = b1.get_group();
 	b2.set_group(group);
@@ -26,8 +24,6 @@ b10("Button 10")
 	b4.set_group(group);  
 	b5.set_group(group);
 	b6.set_group(group);
-	b9.set_group(group);
-	b10.set_group(group);
 
 	Gtk::RadioButton::Group group2 = b7.get_group();
 	b8.set_group(group2);
@@ -40,8 +36,6 @@ b10("Button 10")
 	b6.set_mode(false);
 	b7.set_mode(false);
 	b8.set_mode(false);
-	b9.set_mode(false);
-	b10.set_mode(false);
 
 	b7.set_margin_top(6);
 	b8.set_margin_top(6);
@@ -67,8 +61,6 @@ b10("Button 10")
 	attach(b6, 1, 2, 1, 1);
 	attach(b7, 0, 3, 1, 1);
 	attach(b8, 1, 3, 1, 1);
-	attach(b9, 0, 4, 1, 1);
-	attach(b10, 1, 4, 1, 1);
 }
 
 void IngameGUI::sendBrush(Tile::Terrain data)
@@ -81,6 +73,7 @@ void IngameGUI::sendArchitect(int data)
 {
 	associatedGameView->setArchitect(data);
 	std::cout << "Architect set to " << data << std::endl;
+	
 }
 
 void IngameGUI::associateGameView(GameView* gameViewInput)

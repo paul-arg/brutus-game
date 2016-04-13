@@ -25,8 +25,6 @@ class IngameGUI : public Gtk::Grid
 		Gtk::RadioButton b6;
 		Gtk::RadioButton b7;
 		Gtk::RadioButton b8;
-		Gtk::RadioButton b9;
-		Gtk::RadioButton b10;
 		GameView* associatedGameView;
 };
 

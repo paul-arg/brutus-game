@@ -85,9 +85,9 @@ bool GameView::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
 		cr->set_line_width(3.0);
 		int i, j;
-		for(i = 0; i < map->getHeight(); i++)
+		for(i = 0; i < map->getWidth(); i++)
 		{
-			for(j = 0; j < map->getWidth(); j++)
+			for(j = 0; j < map->getHeight(); j++)
 			{
 				if(map->getTile(i, j) != nullptr)
 				{

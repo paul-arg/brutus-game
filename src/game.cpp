@@ -16,7 +16,7 @@ int main(int argc, char** argv)
 	auto app = Gtk::Application::create(argc, argv, "paul.game");
 
 	Gtk::Window win;
-	win.set_title("Game");
+	win.set_title("Brutus");
 	win.set_default_size(1600, 700);
 	win.set_size_request(1600, 700);
 
@@ -30,17 +30,12 @@ int main(int argc, char** argv)
 	vbox->add(ingameGUI);
 	vbox->show_all();
 
-	Map map(20, 20);
+	Map map(10, 22);
 
 	gameView.addMap(&map);
 	ingameGUI.associateGameView(&gameView);
 
 	map.fillWith(Tile::Terrain::GRASS);
-	map.getTile(3, 5)->newBuilding(Building::Type::HOUSE);
-	map.getTile(3, 6)->newBuilding(Building::Type::HOUSE);
-	map.getTile(3, 7)->newBuilding(Building::Type::HOUSE);
-	map.getTile(3, 8)->newBuilding(Building::Type::HOUSE);
-	map.getTile(3, 9)->newBuilding(Building::Type::HOUSE);
 
 
 	return app->run(win);
