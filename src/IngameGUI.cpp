@@ -21,7 +21,7 @@ b8("Building")
 	Gtk::RadioButton::Group group = b1.get_group();
 	b2.set_group(group);
 	b3.set_group(group);
-	b4.set_group(group);  
+	b4.set_group(group);
 	b5.set_group(group);
 	b6.set_group(group);
 
@@ -44,14 +44,14 @@ b8("Building")
 	set_border_width(10);
 	set_halign(Gtk::ALIGN_END);
 
-	b1.signal_clicked().connect(sigc::bind<Tile::Terrain>(sigc::mem_fun(*this, &IngameGUI::sendBrush), Tile::Terrain::GRASS));
-	b2.signal_clicked().connect(sigc::bind<Tile::Terrain>(sigc::mem_fun(*this, &IngameGUI::sendBrush), Tile::Terrain::FOREST));
-	b3.signal_clicked().connect(sigc::bind<Tile::Terrain>(sigc::mem_fun(*this, &IngameGUI::sendBrush), Tile::Terrain::FARMABLE));
-	b4.signal_clicked().connect(sigc::bind<Tile::Terrain>(sigc::mem_fun(*this, &IngameGUI::sendBrush), Tile::Terrain::ROCK));
-	b5.signal_clicked().connect(sigc::bind<Tile::Terrain>(sigc::mem_fun(*this, &IngameGUI::sendBrush), Tile::Terrain::WATER));
-	b6.signal_clicked().connect(sigc::bind<Tile::Terrain>(sigc::mem_fun(*this, &IngameGUI::sendBrush), Tile::Terrain::FISH));
-	b7.signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &IngameGUI::sendArchitect), 0));
-	b8.signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &IngameGUI::sendArchitect), 1));
+	b1.signal_toggled().connect(sigc::bind<Gtk::RadioButton*, Tile::Terrain>(sigc::mem_fun(*this, &IngameGUI::sendBrush), &b1, Tile::Terrain::GRASS));
+	b2.signal_toggled().connect(sigc::bind<Gtk::RadioButton*, Tile::Terrain>(sigc::mem_fun(*this, &IngameGUI::sendBrush), &b2, Tile::Terrain::FOREST));
+	b3.signal_toggled().connect(sigc::bind<Gtk::RadioButton*, Tile::Terrain>(sigc::mem_fun(*this, &IngameGUI::sendBrush), &b3, Tile::Terrain::FARMABLE));
+	b4.signal_toggled().connect(sigc::bind<Gtk::RadioButton*, Tile::Terrain>(sigc::mem_fun(*this, &IngameGUI::sendBrush), &b4, Tile::Terrain::ROCK));
+	b5.signal_toggled().connect(sigc::bind<Gtk::RadioButton*, Tile::Terrain>(sigc::mem_fun(*this, &IngameGUI::sendBrush), &b5, Tile::Terrain::WATER));
+	b6.signal_toggled().connect(sigc::bind<Gtk::RadioButton*, Tile::Terrain>(sigc::mem_fun(*this, &IngameGUI::sendBrush), &b6, Tile::Terrain::FISH));
+	b7.signal_toggled().connect(sigc::bind<Gtk::RadioButton*, int>(sigc::mem_fun(*this, &IngameGUI::sendArchitect), &b7, 0));
+	b8.signal_toggled().connect(sigc::bind<Gtk::RadioButton*, int>(sigc::mem_fun(*this, &IngameGUI::sendArchitect), &b8, 1));
 
 	attach(b1, 0, 0, 1, 1);
 	attach(b2, 1, 0, 1, 1);
@@ -63,14 +63,18 @@ b8("Building")
 	attach(b8, 1, 3, 1, 1);
 }
 
-void IngameGUI::sendBrush(Tile::Terrain data)
+void IngameGUI::sendBrush(Gtk::RadioButton* button, Tile::Terrain data)
 {
+	if(!button->get_active())
+		return;
 	associatedGameView->setBrush(data);
 	std::cout << "Brush set to " << getTerrainString(data) << std::endl;
 }
 
-void IngameGUI::sendArchitect(int data)
+void IngameGUI::sendArchitect(Gtk::RadioButton* button, int data)
 {
+	if(!button->get_active())
+		return;
 	associatedGameView->setArchitect(data);
 	std::cout << "Architect set to " << data << std::endl;
 	
