@@ -75,6 +75,12 @@ void IngameGUI::sendArchitect(Gtk::RadioButton* button, int data)
 {
 	if(!button->get_active())
 		return;
+	b1.set_sensitive(b7.get_active());
+	b2.set_sensitive(b7.get_active());
+	b3.set_sensitive(b7.get_active());
+	b4.set_sensitive(b7.get_active());
+	b5.set_sensitive(b7.get_active());
+	b6.set_sensitive(b7.get_active());
 	associatedGameView->setArchitect(data);
 	std::cout << "Architect set to " << data << std::endl;
 	
