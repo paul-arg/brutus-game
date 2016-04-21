@@ -1,10 +1,10 @@
 #include <iostream>
-#include <set>
+#include <cmath>
 #include <gtkmm.h>
 
 #include "Map.hpp"
 #include "Tile.hpp"
-#include "basicFunctions.hpp"
+
 
 using namespace std;
 
@@ -61,37 +61,44 @@ int Map::getWidth() const
 	return mapWidth;
 }
 
-bool Map::isThereRoom(int x, int y, int size) const
+bool Map::hasRoom(int x, int y, int size) const
 //check if there is no building in the square of size "size" starting from support
 //support tile is the bottom tile of the square
 {
 	switch(size)
 	{
 		case 1:
-			return getTile(x, y)->getBuilding() == nullptr;
+			if (mapData[x][y] != nullptr)
+			{
+				return mapData[x][y]->getBuilding() == nullptr;
+			}
+			else
+			{
+				return false;
+			}
 			break;
 			
 		case 2:
-			return( isThereRoom(x, y, 1) &&
-				isThereRoom(x - 1, y, 1) &&
-				isThereRoom(x, y - 1 , 1) &&
-				isThereRoom(x - 1, y - 1, 1) );
+			return( hasRoom(x, y, 1) &&
+				hasRoom(x - 1, y, 1) &&
+				hasRoom(x, y - 1 , 1) &&
+				hasRoom(x - 1, y - 1, 1) );
 			break;
 			
 		case 3:
-			return( isThereRoom(x, y, 2) &&
-				isThereRoom(x - 2, y, 1) &&
-				isThereRoom(x - 2, y - 1, 1) &&
-				isThereRoom(x - 2, y - 2, 1) &&
-				isThereRoom(x - 1 , y - 2, 1) &&
-				isThereRoom(x, y - 2, 1) );
+			return( hasRoom(x, y, 2) &&
+				hasRoom(x - 2, y, 1) &&
+				hasRoom(x - 2, y - 1, 1) &&
+				hasRoom(x - 2, y - 2, 1) &&
+				hasRoom(x - 1 , y - 2, 1) &&
+				hasRoom(x, y - 2, 1) );
 			break;
 			
 		case 4:
-			return( isThereRoom(x, y, 2) &&
-				isThereRoom(x - 2, y, 2) &&
-				isThereRoom(x, y - 2, 2) &&
-				isThereRoom(x - 2, y - 2, 2) );
+			return( hasRoom(x, y, 2) &&
+				hasRoom(x - 2, y, 2) &&
+				hasRoom(x, y - 2, 2) &&
+				hasRoom(x - 2, y - 2, 2) );
 			break;
 	}
 }
@@ -100,17 +107,34 @@ void Map::newTile(int x, int y, Tile::Terrain terrain)
 {
 	if(x >= mapWidth || y >= mapHeight || x < 0 || y <0)
 	{
-		std::cout << "newTile : (" << x << ", " << y << ") : You are beyond the map limits" << std::endl;
+		std::cout << "newTile : (" << x << ", " << y << ") : This is beyond the map limits" << std::endl;
 	}
 	else if(mapData[x][y] != nullptr)
 	{
-		std::cout << "newTile : (" << x << ", " << y << ") : There is alrady a " << getTerrainString(mapData[x][y]->getTerrain()) << " tile here" << std::endl;
+		std::cout << "newTile : (" << x << ", " << y << ") : There is alrady a " << dictTerrainString(mapData[x][y]->getTerrain()) << " tile here" << std::endl;
 	}
 	else
 	{
-		invalidateTile(x, y);
+		invalidateZone(x, y, 1);
 		mapData[x][y] = new Tile(this, x, y, terrain);
-		std::cout << "newTile : (" << x << ", " << y << ") : " << getTerrainString(mapData[x][y]->getTerrain()) << " tile created" << std::endl;
+		std::cout << "newTile : (" << x << ", " << y << ") : " << dictTerrainString(mapData[x][y]->getTerrain()) << " tile created" << std::endl;
+	}
+}
+
+void Map::newTileArea(int x1, int y1, int x2, int y2, Tile::Terrain terrain)
+{
+	int xm = min(x1, x2);
+	int xM = max(x1, x2);
+	int ym = min(y1, y2);
+	int yM = max(y1, y2);
+	int i;
+	int j;
+	for (i = xm; i <= xM; i++)
+	{
+		for (j = ym; j <= yM; j++)
+		{
+			newTile(i, j, terrain);
+		}
 	}
 }
 
@@ -130,16 +154,16 @@ void Map::fillWith(Tile::Terrain paint)
 	}
 }
 
-void Map::invalidateTile(int x, int y)
+void Map::invalidateZone(int x, int y, int size)
 {
 	auto win = container->get_window();
 		if (win)
 		{
 			Gdk::Rectangle r(
-				isoToScreenX(x, y, TILE_HEIGHT, TILE_WIDTH, mapHeight*TILE_WIDTH, 0) - TILE_WIDTH,
-				isoToScreenY(x, y, TILE_HEIGHT, TILE_WIDTH, mapHeight*TILE_WIDTH, 0),
-				2*TILE_WIDTH,
-				2*TILE_HEIGHT
+				isoToScreenX(x, y, TILE_HEIGHT, TILE_WIDTH, mapHeight*TILE_WIDTH, 0) - size*TILE_WIDTH,
+				isoToScreenY(x, y, TILE_HEIGHT, TILE_WIDTH, mapHeight*TILE_WIDTH, 0) - 2*(size-1)*TILE_HEIGHT,
+				2*size*TILE_WIDTH,
+				2*size*TILE_HEIGHT
 				);
 			win->invalidate_rect(r, false);
 		}
@@ -171,7 +195,7 @@ void Map::printTile(int x, int y) const
 {
 	if(x >= mapWidth || y >= mapHeight || x < 0 || y <0)
 	{
-		std::cout << "printTile : (" << x << ", " << y << ") : You are beyond the map limits" << std::endl;
+		std::cout << "printTile : (" << x << ", " << y << ") : This is beyond the map limits" << std::endl;
 	}
 	else if(mapData[x][y] == nullptr)
 	{
@@ -179,7 +203,7 @@ void Map::printTile(int x, int y) const
 	}
 	else
 	{
-		std::cout << "printTile : (" << x << ", " << y << ") : " << mapData[x][y] << " : " << getTerrainString(mapData[x][y]->getTerrain()) << " tile"<<std::endl;
+		std::cout << "printTile : (" << x << ", " << y << ") : " << mapData[x][y] << " : " << dictTerrainString(mapData[x][y]->getTerrain()) << " tile"<<std::endl;
 	}
 }
 
@@ -187,7 +211,7 @@ void Map::deleteTile(int x, int y)
 {
 	if(x >= mapWidth || y >= mapHeight || x < 0 || y <0)
 	{
-		std::cout << "deleteTile : (" << x << ", " << y << ") : You are beyond the map limits" << std::endl;
+		std::cout << "deleteTile : (" << x << ", " << y << ") : This is beyond the map limits" << std::endl;
 	}
 	else if(mapData[x][y] == nullptr)
 	{
@@ -195,11 +219,90 @@ void Map::deleteTile(int x, int y)
 	}
 	else
 	{
-		std::string terrainString = getTerrainString(mapData[x][y]->getTerrain());
+		std::string terrainString = dictTerrainString(mapData[x][y]->getTerrain());
 		delete mapData[x][y];
 		mapData[x][y] = nullptr;
-		invalidateTile(x, y);
+		invalidateZone(x, y, 1);
 		std::cout << "deleteTile : (" << x << ", " << y << ") : " << terrainString << " tile deleted" << std::endl;
+	}
+}
+
+void Map::deleteTileArea(int x1, int y1, int x2, int y2)
+{
+	int xm = min(x1, x2);
+	int xM = max(x1, x2);
+	int ym = min(y1, y2);
+	int yM = max(y1, y2);
+	int i;
+	int j;
+	for (i = xm; i <= xM; i++)
+	{
+		for (j = ym; j <= yM; j++)
+		{
+			deleteTile(i, j);
+		}
+	}
+}
+
+void Map::buildArea(int x1, int y1, int x2, int y2, Building::Type type)
+{
+	if (dictPolyBuildable(type))
+	{
+		int xm = min(x1, x2);
+		int xM = max(x1, x2);
+		int ym = min(y1, y2);
+		int yM = max(y1, y2);
+		int i;
+		int j;
+		for (i = xm; i <= xM; i++)
+		{
+			for (j = ym; j <= yM; j++)
+			{
+				if (mapData[i][j] != nullptr)
+				{
+					mapData[i][j]->newBuilding(type);
+				}
+			}
+		}
+	}
+	else
+	{
+		if (mapData[x2][y2] != nullptr)
+		{
+			mapData[x2][y2]->newBuilding(type);
+		}
+	}
+}
+
+void Map::destroyArea(int x1, int y1, int x2, int y2)
+{
+	int xm = min(x1, x2);
+	int xM = max(x1, x2);
+	int ym = min(y1, y2);
+	int yM = max(y1, y2);
+	int i;
+	int j;
+	for (i = xm; i <= xM; i++)
+	{
+		for (j = ym; j <= yM; j++)
+		{
+			if (mapData[i][j] != nullptr)
+			{
+				mapData[i][j]->destroyBuilding();
+			}
+		}
+	}
+}
+
+std::string dictEditModeString(int editMode)
+{
+	if (editMode == 0)
+	{
+		return "tile";
+	}
+	else
+	{
+		return "building";
 	}
 }
 
