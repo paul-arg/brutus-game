@@ -13,8 +13,9 @@ class IngameGUI : public Gtk::Grid
 		IngameGUI();
 
 		void associateGameView(GameView* gameViewInput);
-		void sendBrush(Gtk::RadioButton* button, Tile::Terrain data);
-		void sendArchitect(Gtk::RadioButton* button, int data);
+		void sendTileBrush(Gtk::RadioButton* button, Tile::Terrain data);
+		void sendBuildingBrush(Gtk::RadioButton* button, Building::Type data);
+		void sendEditMode(Gtk::RadioButton* button, int data);
 
 	private:
 		Gtk::RadioButton b1;
@@ -25,6 +26,11 @@ class IngameGUI : public Gtk::Grid
 		Gtk::RadioButton b6;
 		Gtk::RadioButton b7;
 		Gtk::RadioButton b8;
+		Gtk::RadioButton b9;
+		Gtk::RadioButton b10;
+		Gtk::RadioButton b11;
+		Gtk::RadioButton b12;
+		Gtk::RadioButton b13;
 		GameView* associatedGameView;
 };
 
