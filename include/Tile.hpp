@@ -18,6 +18,7 @@ class Tile
 		enum Terrain {GRASS, FARMABLE, WATER, FISH, ROCK, FOREST};
 
 		Tile(Map* container, int x, int y, Tile::Terrain terrain);
+		~Tile();
 
 		int getX() const;
 		int getY() const;
@@ -26,9 +27,11 @@ class Tile
 		Tile* getNeighbour(Direction direction) const;
 		void printBuilding() const;
 		Map* getContainer() const;
+		bool isBuildable() const;
 
 		void newBuilding(Building::Type buildingInput);
-		void deleteBuilding();
+		void destroyBuilding();
+		void setBuilding(Building* buildingInput);
 		void draw(const Cairo::RefPtr<Cairo::Context>& cr);
 	
 	private:
@@ -38,5 +41,7 @@ class Tile
 		Tile::Terrain terrain;
 		Building* building;
 };
+
+std::string dictTerrainString(Tile::Terrain terrain);
 
 #endif

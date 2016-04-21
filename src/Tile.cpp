@@ -16,6 +16,14 @@ Tile::Tile(Map* containerInput, int xInput, int yInput, Tile::Terrain terrainInp
 	building = nullptr;
 }
 
+Tile::~Tile()
+{
+    if (building != nullptr)
+	{
+		destroyBuilding();
+	}
+}
+
 int Tile::getX() const
 {
 	return x;
@@ -28,23 +36,15 @@ int Tile::getY() const
 
 void Tile::newBuilding(Building::Type buildingInput)
 {
-	if(terrain == Tile::Terrain::WATER ||
-		terrain == Tile::Terrain::FISH ||
-		terrain == Tile::Terrain::FOREST ||
-		terrain == Tile::Terrain::ROCK)
+	if(!isBuildable() || !container->hasRoom(x, y, dictBuildingSize(buildingInput)))
 	{
 		std::cout << "newBuilding : (" << x << ", " << y << ") : this tile is not buildable" << std::endl;
 	}
-	else if(building == nullptr)
-	{
-		building = new Building(this, buildingInput);
-		container->invalidateTile(x, y);
-		std::cout << "newBuilding : (" << x << ", " << y << ") : Building created" << std::endl;
-	}
-
 	else
 	{
-		std::cout << "newBuilding : (" << x << ", " << y << ") : There is alrady a building here" << std::endl;
+		building = new Building(this, buildingInput);
+		container->invalidateZone(x, y, building->getSize());
+		std::cout << "newBuilding : (" << x << ", " << y << ") : " << dictBuildingString(buildingInput) << " created" << std::endl;
 	}
 }
 
@@ -102,18 +102,21 @@ Tile* Tile::getNeighbour(Direction direction) const
 
 
 
-void Tile::deleteBuilding()
+void Tile::destroyBuilding()
 {
 	if(building == nullptr)
 	{
-		std::cout << "deleteBuilding : (" << x << ", " << y << ") : There is no building to destroy here" << std::endl;
+		std::cout << "destroyBuilding : (" << x << ", " << y << ") : There is no building to destroy here" << std::endl;
 	}
 	else
 	{
+		const int xSupport = building->getSupport()->getX();
+		const int ySupport = building->getSupport()->getY();
+		const int size = building->getSize();
+		const std::string type = dictBuildingString(building->getType());
 		delete building;
-		building = nullptr;
-		container->invalidateTile(x, y);
-		std::cout << "deleteBuilding : (" << x << ", " << y << ") : Building destroyed" << std::endl;
+		container->invalidateZone(xSupport, ySupport, size);
+		std::cout << "destroyBuilding : (" << x << ", " << y << ") : " << type << " destroyed" << std::endl;
 	}
 }
 
@@ -144,11 +147,11 @@ void Tile::draw(const Cairo::RefPtr<Cairo::Context>& cr)
 			cr->set_source_rgb(0.07,0.57,0.19);
 			break;
 	}
-	cr->move_to(mapHeight*TILE_WIDTH + a, 0 + b);
+	cr->move_to(mapHeight*TILE_WIDTH + a             , 0 + b);
 	cr->line_to(mapHeight*TILE_WIDTH + TILE_WIDTH + a, TILE_HEIGHT + b);
-	cr->line_to(mapHeight*TILE_WIDTH + a, 2*TILE_HEIGHT + b);
+	cr->line_to(mapHeight*TILE_WIDTH + a             , 2*TILE_HEIGHT + b);
 	cr->line_to(mapHeight*TILE_WIDTH - TILE_WIDTH + a, TILE_HEIGHT + b);
-	cr->line_to(mapHeight*TILE_WIDTH + a, 0 + b);
+	cr->line_to(mapHeight*TILE_WIDTH + a             , 0 + b);
 	cr->fill();
 }
 
@@ -161,6 +164,67 @@ void Tile::printBuilding() const
 	else
 	{
 		std::cout << "printBuilding: (" << x << ", " << y << ") : " << building << std::endl;
+	}
+}
+
+void Tile::setBuilding(Building* buildingInput)
+{
+	building = buildingInput;
+}
+
+bool Tile::isBuildable() const
+{
+	switch(terrain)
+	{
+		
+		case Tile::Terrain::GRASS :
+			return true;
+			break;
+		case Tile::Terrain::FARMABLE :
+			return true;
+			break;
+		case Tile::Terrain::WATER :
+			return false;
+			break;
+		case Tile::Terrain::FISH :
+			return false;
+			break;
+		case Tile::Terrain::ROCK :
+			return false;
+			break;
+		case Tile::Terrain::FOREST :
+			return false;
+			break;
+	}
+}
+
+std::string dictTerrainString(Tile::Terrain terrain)
+{
+	switch(terrain)
+	{
+		case Tile::Terrain::GRASS:
+			return "grass";
+			break;
+			
+		case Tile::Terrain::FARMABLE:
+			return "farmable";
+			break;
+			
+		case Tile::Terrain::WATER:
+			return "water";
+			break;
+			
+		case Tile::Terrain::FISH:
+			return "fish";
+			break;
+			
+		case Tile::Terrain::FOREST:
+			return "forest";
+			break;
+			
+		case Tile::Terrain::ROCK:
+			return "rock";
+			break;
 	}
 }
 
