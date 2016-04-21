@@ -15,17 +15,27 @@ class GameView : public Gtk::DrawingArea
 		GameView();
 
 		bool onMouseDown( GdkEventButton *event );
+		bool onMouseUp( GdkEventButton *event );
 
 		void addMap(Map* mapInput);
-		void setBrush(Tile::Terrain brushInput);
-		void setArchitect(int architectInput);
+		void setTileBrush(Tile::Terrain tileBrushInput);
+		void setBuildingBrush(Building::Type buildingBrushInput);
+		void setEditMode(int editModeInput);
 
 	protected:
 		//Override default signal handler:
 		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 		Map* map;
-		Tile::Terrain brush;
-		int architect;
+		Tile::Terrain tileBrush;
+		Building::Type buildingBrush;
+		int editMode;
+		int xIsoClick;
+		int yIsoClick;
 };
+
+int screenToIsoX(int xScreen, int yScreen, int tileHeight, int tileWidth, int offsetX, int offsetY);
+int screenToIsoY(int xScreen, int yScreen, int tileHeight, int tileWidth, int offsetX, int offsetY);
+int isoToScreenX(int xIso, int yIso, int tileHeight, int tileWidth, int offsetX, int offsetY);
+int isoToScreenY(int xIso, int yIso, int tileHeight, int tileWidth, int offsetX, int offsetY);
 
 #endif

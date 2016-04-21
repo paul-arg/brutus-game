@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include <gtkmm.h>
 
 #include "GameView.hpp"
@@ -6,7 +7,7 @@
 #include "Map.hpp"
 #include "Tile.hpp"
 #include "Building.hpp"
-#include "basicFunctions.hpp"
+
 
 using namespace std;
 
@@ -15,55 +16,70 @@ GameView::GameView() //constructor
 	//signals
 	add_events( Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK );
 	signal_button_press_event().connect( sigc::mem_fun( *this, &GameView::onMouseDown ) );
+	signal_button_release_event().connect( sigc::mem_fun( *this, &GameView::onMouseUp ) );
 	set_hexpand(true);
 	set_vexpand(true);
 	map = nullptr;
-	brush = Tile::Terrain::GRASS;
-	architect = 0;
+	tileBrush = Tile::Terrain::GRASS;
+	buildingBrush = Building::Type::ROAD;
+	editMode = 0;
 }
 
-void GameView::setBrush(Tile::Terrain brushInput)
+void GameView::setTileBrush(Tile::Terrain tileBrushInput)
 {
-	brush = brushInput;
+	tileBrush = tileBrushInput;
 }
 
-void GameView::setArchitect(int architectInput)
+void GameView::setBuildingBrush(Building::Type buildingBrushInput)
 {
-	architect = architectInput;
+	buildingBrush = buildingBrushInput;
+}
+
+void GameView::setEditMode(int editModeInput)
+{
+	editMode = editModeInput;
 }
 
 bool GameView::onMouseDown( GdkEventButton *event )
 {
-	int xIso = screenToIsoX(event->x, event->y, TILE_HEIGHT, TILE_WIDTH, map->getHeight()*TILE_WIDTH, 0);
-	int yIso = screenToIsoY(event->x, event->y, TILE_HEIGHT, TILE_WIDTH, map->getHeight()*TILE_WIDTH, 0);
-	cout << "    clicked at " << event->x << ", " << event->y << endl;
-	cout << "    clicked at iso " << xIso << ", " << yIso << endl;
-	if (architect == 0)
+	xIsoClick = screenToIsoX(event->x, event->y, TILE_HEIGHT, TILE_WIDTH, map->getHeight()*TILE_WIDTH, 0);
+	yIsoClick = screenToIsoY(event->x, event->y, TILE_HEIGHT, TILE_WIDTH, map->getHeight()*TILE_WIDTH, 0);
+	//cout << "    clicked at " << event->x << ", " << event->y << endl;
+	//cout << "    clicked at iso " << xIso << ", " << yIso << endl;
+	
+	return true;
+}
+
+bool GameView::onMouseUp( GdkEventButton *event )
+{
+	int xIsoRelease = screenToIsoX(event->x, event->y, TILE_HEIGHT, TILE_WIDTH, map->getHeight()*TILE_WIDTH, 0);
+	int yIsoRelease = screenToIsoY(event->x, event->y, TILE_HEIGHT, TILE_WIDTH, map->getHeight()*TILE_WIDTH, 0);
+	//cout << "    released at " << event->x << ", " << event->y << endl;
+	//cout << "    released at iso " << xIso << ", " << yIso << endl;*/
+	if (editMode == 0)
 	{
 		if(map != nullptr)
 		{
 		if(event->button == 1)
-			map->newTile(xIso, yIso, brush);
+			map->newTileArea(xIsoClick, yIsoClick, xIsoRelease, yIsoRelease, tileBrush);
 		if(event->button == 3)
-			map->deleteTile(xIso, yIso);
+			map->deleteTileArea(xIsoClick, yIsoClick, xIsoRelease, yIsoRelease);
 		}
 	}
-	if (architect == 1)
+	if (editMode == 1)
 	{
-		if (map->getTile(xIso, yIso) != nullptr)
+		if (map->getTile(xIsoRelease, yIsoRelease) != nullptr)
 		{
 			if(event->button == 1)
 			{
-				map->getTile(xIso, yIso)->newBuilding(Building::Type::HOUSE);
+				map->buildArea(xIsoClick, yIsoClick, xIsoRelease, yIsoRelease, buildingBrush);
 			}
 			if(event->button == 3)
 			{
-				map->getTile(xIso, yIso)->deleteBuilding();
+				map->destroyArea(xIsoClick, yIsoClick, xIsoRelease, yIsoRelease);
 			}
 		}
-
 	}
-
 
 	return true;
 }
@@ -75,14 +91,9 @@ void GameView::addMap(Map* mapInput)
 }
 
 bool GameView::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
-//overriding the render function
 {
-	cr->set_line_width(3.0);
-
 	if(map != nullptr)
 	{
-		map->drawGrid(cr);
-
 		cr->set_line_width(3.0);
 		int i, j;
 		for(i = 0; i < map->getWidth(); i++)
@@ -99,9 +110,32 @@ bool GameView::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 				}
 			}
 		}
+		cr->set_line_width(3.0);
+		map->drawGrid(cr);
 	}
 
 	return true;
+}
+
+int screenToIsoX(int xScreen, int yScreen, int tileHeight, int tileWidth, int offsetX, int offsetY)
+{
+	return floor((-offsetX*tileHeight + xScreen*tileHeight - offsetY*tileWidth + tileWidth*yScreen) / (2*tileWidth*tileHeight));
+}
+
+int screenToIsoY(int xScreen, int yScreen, int tileHeight, int tileWidth, int offsetX, int offsetY)
+{
+	return floor((offsetX*tileHeight - xScreen*tileHeight - offsetY*tileWidth + tileWidth*yScreen) / (2*tileWidth*tileHeight));
+}
+
+//upper corner of the tile
+int isoToScreenX(int xIso, int yIso, int tileHeight, int tileWidth, int offsetX, int offsetY)
+{
+	return xIso*tileWidth - yIso*tileWidth + offsetX;
+}
+
+int isoToScreenY(int xIso, int yIso, int tileHeight, int tileWidth, int offsetX, int offsetY)
+{
+	return xIso*tileHeight + yIso*tileHeight + offsetY;
 }
 
 
