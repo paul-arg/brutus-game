@@ -7,13 +7,13 @@
 #include "Map.hpp"
 #include "Tile.hpp"
 #include "Building.hpp"
-#include "basicFunctions.hpp"
+
 
 using namespace std;
 
 int main(int argc, char** argv)
 {
-	auto app = Gtk::Application::create(argc, argv, "paul.game");
+	auto app = Gtk::Application::create(argc, argv, "brutus.game");
 
 	Gtk::Window win;
 	win.set_title("Brutus");
@@ -30,13 +30,10 @@ int main(int argc, char** argv)
 	vbox->add(ingameGUI);
 	vbox->show_all();
 
-	Map map(10, 22);
+	Map map(20, 20);
 
 	gameView.addMap(&map);
 	ingameGUI.associateGameView(&gameView);
-
-	map.fillWith(Tile::Terrain::GRASS);
-
 
 	return app->run(win);
 }
