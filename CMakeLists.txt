@@ -17,7 +17,7 @@ find_package(PkgConfig)
 # now let's actually check for the required dependencies
 pkg_check_modules(DEPS REQUIRED gtkmm-3.0)
 
-add_definitions(${DEPS_CFLAGS} -std=c++11)
+add_definitions(${DEPS_CFLAGS} -std=c++11 -w)
 link_libraries(${DEPS_LIBRARIES})
 link_directories(${DEPS_LIBRARY_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
