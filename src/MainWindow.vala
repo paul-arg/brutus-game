@@ -22,8 +22,8 @@ public class MainWindow : Window {
         game_GUI = new InGameGUI (this);
         game_map = new Map (this, widthInput, heightInput);
 
-        game_view.set_hexpand (true);
-        game_view.set_vexpand (true);
+        game_view.hexpand = true;
+        game_view.vexpand = true;
 
         box.add (game_view);
         box.add (game_GUI);

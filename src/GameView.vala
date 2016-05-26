@@ -7,6 +7,7 @@ public class GameView : Gtk.DrawingArea {
         container = containerInput;
         events |= Gdk.EventMask.BUTTON_PRESS_MASK;
         events |= Gdk.EventMask.BUTTON_RELEASE_MASK;
+        events |= Gdk.EventMask.POINTER_MOTION_MASK;
     }
 
     public override bool draw (Cairo.Context cr) {
@@ -69,6 +70,23 @@ public class GameView : Gtk.DrawingArea {
             if (event.button == 3) {
                 container.game_map.destroyArea (xIsoClick, yIsoClick, xIsoRelease, yIsoRelease);
             }
+        }
+
+        return true;
+    }
+
+    public override bool motion_notify_event (Gdk.EventMotion event) {
+        var width = get_allocated_width ();
+        var height = get_allocated_height ();
+        if (event.x < 5) {
+            warning ("Scroll left");
+        } else if (event.x > width - 5) {
+            warning ("Scroll right");
+        }
+        if (event.y < 5) {
+            warning ("Scroll up");
+        } else if (event.y > height - 5) {
+            warning ("Scroll down");
         }
 
         return true;

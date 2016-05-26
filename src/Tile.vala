@@ -67,11 +67,11 @@ public class Tile {
 
     public void build (Building.Type typeInput) {
         if (!container.hasRoom (x, y, typeInput.size ())) {
-            message (@ "build : ($x, $y) : there is no room for this building.");
+            message (@"build : ($x, $y) : there is no room for this building.");
         } else if (terrain == Tile.Terrain.FARMABLE && !container.farmableArea (x, y, typeInput.size ())) {
-            message (@ "build : ($x, $y) : farms can only be built on farmable areas.");
+            message (@"build : ($x, $y) : farms can only be built on farmable areas.");
         } else if (!terrain.buildable ()) {
-            message (@ "build : ($x, $y) : this terrain is not buildable.");
+            message (@"build : ($x, $y) : this terrain is not buildable.");
         } else {
             building = new Building (this, typeInput);
             int i;
@@ -83,14 +83,14 @@ public class Tile {
                 }
             }
 
-            message (@ "build : ($x, $y) : $(typeInput.to_string()) created.");
+            message (@"build : ($x, $y) : $(typeInput.to_string()) created.");
             container.invalidateZone (x, y, typeInput.size ());
         }
     }
 
     public void destroyBuilding () {
         if (building == null) {
-            message (@ "destroyBuilding : ($x, $y) : there is no building to destroy here.");
+            message (@"destroyBuilding : ($x, $y) : there is no building to destroy here.");
         } else {
             var size = building.type.size ();
             var type = building.type;
@@ -105,7 +105,7 @@ public class Tile {
                 }
             }
 
-            message (@ "destroyBuilding : ($xS, $yS) : $(type.to_string()) destroyed.");
+            message (@"destroyBuilding : ($xS, $yS) : $(type.to_string()) destroyed.");
             container.invalidateZone (xS, yS, size);
         }
     }

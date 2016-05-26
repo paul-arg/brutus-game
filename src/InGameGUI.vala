@@ -17,19 +17,13 @@ public class InGameGUI : Grid {
     private RadioButton farmButton;
 
     public void onEditModeToggled () {
-        grassButton.get_group ().
+        grassButton.get_group ().foreach ((item) => {
+            item.set_sensitive (tileButton.get_active ());
+        });
 
-         foreach ((item) => {
-                      item.set_sensitive (tileButton.get_active ());
-                  }) {
-        }
-
-        roadButton.get_group ().
-
-         foreach ((item) => {
-                      item.set_sensitive (buildingButton.get_active ());
-                  }) {
-        }
+        roadButton.get_group ().foreach ((item) => {
+            item.set_sensitive (buildingButton.get_active ());
+        });
 
         container.editMode = tileButton.get_active () ? 0 : 1;
     }
@@ -50,53 +44,51 @@ public class InGameGUI : Grid {
         marketButton = new Gtk.RadioButton.with_label_from_widget (roadButton, "Market");
         farmButton = new Gtk.RadioButton.with_label_from_widget (roadButton, "Farm");
 
-        tileButton.toggled.connect (() =>
-                                    onEditModeToggled ()
-                                    );
+        tileButton.toggled.connect (() => onEditModeToggled ());
 
         grassButton.clicked.connect (() => {
-                                         container.tileBrush = Tile.Terrain.GRASS;
-                                     });
+            container.tileBrush = Tile.Terrain.GRASS;
+        });
 
         forestButton.clicked.connect (() => {
                                           container.tileBrush = Tile.Terrain.FOREST;
                                       });
 
         farmableButton.clicked.connect (() => {
-                                            container.tileBrush = Tile.Terrain.FARMABLE;
-                                        });
+            container.tileBrush = Tile.Terrain.FARMABLE;
+        });
 
         rockButton.clicked.connect (() => {
-                                        container.tileBrush = Tile.Terrain.ROCK;
-                                    });
+            container.tileBrush = Tile.Terrain.ROCK;
+        });
 
         waterButton.clicked.connect (() => {
-                                         container.tileBrush = Tile.Terrain.WATER;
-                                     });
+            container.tileBrush = Tile.Terrain.WATER;
+        });
 
         fishButton.clicked.connect (() => {
-                                        container.tileBrush = Tile.Terrain.FISH;
-                                    });
+            container.tileBrush = Tile.Terrain.FISH;
+        });
 
         roadButton.clicked.connect (() => {
-                                        container.buildingBrush = Building.Type.ROAD;
-                                    });
+            container.buildingBrush = Building.Type.ROAD;
+        });
 
         houseButton.clicked.connect (() => {
-                                         container.buildingBrush = Building.Type.HOUSE;
-                                     });
+            container.buildingBrush = Building.Type.HOUSE;
+        });
 
         fountainButton.clicked.connect (() => {
-                                            container.buildingBrush = Building.Type.FOUNTAIN;
-                                        });
+            container.buildingBrush = Building.Type.FOUNTAIN;
+        });
 
         marketButton.clicked.connect (() => {
-                                          container.buildingBrush = Building.Type.MARKET;
-                                      });
+            container.buildingBrush = Building.Type.MARKET;
+        });
 
         farmButton.clicked.connect (() => {
-                                        container.buildingBrush = Building.Type.FARM;
-                                    });
+            container.buildingBrush = Building.Type.FARM;
+        });
 
         grassButton.set_mode (false);
         forestButton.set_mode (false);

@@ -17,10 +17,10 @@ public class Map {
 
     public void newTile (Tile.Terrain terrainInput, int x, int y) {
         if (beyondLimits (x, y)) {
-            message (@ "newTile : this is beyond the map limits.");
+            message (@"newTile : this is beyond the map limits.");
         } else {
             mapData.set (x + y * mapWidth, new Tile (this, x, y, terrainInput));
-            message (@ "newTile : ($x, $y) : $(terrainInput.to_string()) tile created.");
+            message (@"newTile : ($x, $y) : $(terrainInput.to_string()) tile created.");
             invalidateZone (x, y, 1);
         }
     }
@@ -138,11 +138,11 @@ public class Map {
 
     public void deleteTile (int x, int y) {
         if (beyondLimits (x, y)) {
-            message (@ "deleteTile : this is beyond the map limits.");
+            message (@"deleteTile : this is beyond the map limits.");
         } else if (getTile (x, y) == null) {
-            message (@ "deleteTile : ($x, $y) : there is no tile to delete here.");
+            message (@"deleteTile : ($x, $y) : there is no tile to delete here.");
         } else {
-            message (@ "deleteTile : ($x, $y) : $(getTile(x, y).terrain.to_string()) tile deleted.");
+            message (@"deleteTile : ($x, $y) : $(getTile(x, y).terrain.to_string()) tile deleted.");
             mapData.remove (x + y * mapWidth);
             invalidateZone (x, y, 1);
         }
@@ -175,9 +175,9 @@ public class Map {
             for (i = xm; i <= xM; i++) {
                 for (j = ym; j <= yM; j++) {
                     if (beyondLimits (i, j)) {
-                        message (@ "build : this is beyond the map limits.");
+                        message (@"build : this is beyond the map limits.");
                     } else if (getTile (i, j) == null) {
-                        message (@ "build : ($i, $j) : there is no tile here.");
+                        message (@"build : ($i, $j) : there is no tile here.");
                     } else {
                         getTile (i, j).build (type);
                     }
@@ -185,9 +185,9 @@ public class Map {
             }
         } else {
             if (beyondLimits (x2, y2)) {
-                message (@ "build : this is beyond the map limits.");
+                message (@"build : this is beyond the map limits.");
             } else if (getTile (x2, y2) == null) {
-                message (@ "build : ($x2, $y2) : there is no tile here.");
+                message (@"build : ($x2, $y2) : there is no tile here.");
             } else {
                 getTile (x2, y2).build (type);
             }
@@ -205,7 +205,7 @@ public class Map {
         for (i = xm; i <= xM; i++) {
             for (j = ym; j <= yM; j++) {
                 if (getTile (i, j) == null) {
-                    debug (@ "destroyBuilding : ($i, $j) : there is no tile here.");
+                    debug (@"destroyBuilding : ($i, $j) : there is no tile here.");
                 } else {
                     getTile (i, j).destroyBuilding ();
                 }
