@@ -41,8 +41,8 @@ public class GameView : Gtk.DrawingArea
 		{
 			xIsoClick = screenToIsoX((int) event.x, (int) event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight*TILE_WIDTH, 0);
 			yIsoClick = screenToIsoY((int) event.x, (int) event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight*TILE_WIDTH, 0);
-			//stdout.printf(@"    clicked at $(event.x) ,$(event.y)\n");
-			//stdout.printf(@"    clicked at iso $xIsoClick ,$yIsoClick\n");
+			//message(@"    clicked at $(event.x) ,$(event.y)");
+			//message(@"    clicked at iso $xIsoClick ,$yIsoClick");
 			;
 
 			return true;

@@ -71,13 +71,13 @@ public class Tile {
 	{
 		if(!container.hasRoom(x, y, typeInput.size()))
 		{
-			stdout.printf(@"build : ($x, $y) : there is no room for this building.\n");
+			message(@"build : ($x, $y) : there is no room for this building.");
 		}
-		else if (!container.farmableArea(x, y, typeInput.size())) {
-			stdout.printf(@"build : ($x, $y) : farms can only be built on farmable areas.\n");
+		else if (terrain == Tile.Terrain.FARMABLE && !container.farmableArea(x, y, typeInput.size())) {
+			message(@"build : ($x, $y) : farms can only be built on farmable areas.");
 		}
 		else if(!terrain.buildable())
-			stdout.printf(@"build : ($x, $y) : this terrain is not buildable.\n");
+			message(@"build : ($x, $y) : this terrain is not buildable.");
 		else
 		{
 			building = new Building(this, typeInput);
@@ -90,7 +90,7 @@ public class Tile {
 					container.getTile(x - i, y - j).setBuilding(building);
 				}
 			}
-			stdout.printf(@"build : ($x, $y) : $(typeInput.to_string()) created.\n");
+			message(@"build : ($x, $y) : $(typeInput.to_string()) created.");
 			container.invalidateZone(x, y, typeInput.size());
 		}
 	}
@@ -99,7 +99,7 @@ public class Tile {
 	{
 		if (building == null)
 		{
-			stdout.printf(@"destroyBuilding : ($x, $y) : there is no building to destroy here.\n");
+			message(@"destroyBuilding : ($x, $y) : there is no building to destroy here.");
 		}
 		else
 		{
@@ -116,7 +116,7 @@ public class Tile {
 					container.getTile(xS - i, yS - j).building = null;
 				}
 			}
-			stdout.printf(@"destroyBuilding : ($xS, $yS) : $(type.to_string()) destroyed.\n");
+			message(@"destroyBuilding : ($xS, $yS) : $(type.to_string()) destroyed.");
 			container.invalidateZone(xS, yS, size);
 		}
 	}

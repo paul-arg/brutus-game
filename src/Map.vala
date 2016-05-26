@@ -21,12 +21,12 @@ public class Map
 	{
 		if(beyondLimits(x, y))
 		{
-			stdout.printf(@"newTile : this is beyond the map limits.\n");
+			message(@"newTile : this is beyond the map limits.");
 		}
 		else
 		{
 			mapData.set(x + y*mapWidth, new Tile(this, x, y, terrainInput));
-			stdout.printf(@"newTile : ($x, $y) : $(terrainInput.to_string()) tile created.\n");
+			message(@"newTile : ($x, $y) : $(terrainInput.to_string()) tile created.");
 			invalidateZone(x, y, 1);
 		}
 	}
@@ -156,15 +156,15 @@ public class Map
 	{
 		if(beyondLimits(x, y))
 		{
-			stdout.printf(@"deleteTile : this is beyond the map limits.\n");
+			message(@"deleteTile : this is beyond the map limits.");
 		}
 		else if(getTile(x, y) == null)
 		{
-			stdout.printf(@"deleteTile : ($x, $y) : there is no tile to delete here.\n");
+			message(@"deleteTile : ($x, $y) : there is no tile to delete here.");
 		}
 		else
 		{
-			stdout.printf(@"deleteTile : ($x, $y) : $(getTile(x, y).terrain.to_string()) tile deleted.\n");
+			message(@"deleteTile : ($x, $y) : $(getTile(x, y).terrain.to_string()) tile deleted.");
 			mapData.remove(x + y*mapWidth);
 			invalidateZone(x, y, 1);
 		}
@@ -203,11 +203,11 @@ public class Map
 				{
 					if(beyondLimits(i, j))
 					{
-						stdout.printf(@"newTile : this is beyond the map limits.\n");
+						message(@"build : this is beyond the map limits.");
 					}
 					else if (getTile(i, j) == null)
 					{
-						stdout.printf(@"build : ($i, $j) : there is no tile here.\n");
+						message(@"build : ($i, $j) : there is no tile here.");
 					}
 					else
 					{
@@ -220,11 +220,11 @@ public class Map
 		{
 			if(beyondLimits(x2, y2))
 			{
-				stdout.printf(@"newTile : this is beyond the map limits.\n");
+				message(@"build : this is beyond the map limits.");
 			}
 			else if (getTile(x2, y2) == null)
 			{
-				stdout.printf(@"build : ($x2, $y2) : there is no tile here.\n");
+				message(@"build : ($x2, $y2) : there is no tile here.");
 			}
 			else
 			{
@@ -247,7 +247,7 @@ public class Map
 			{
 				if (getTile(i, j) == null)
 				{
-					stdout.printf(@"destroyBuilding : ($i, $j) : there is no tile here.\n");
+					debug(@"destroyBuilding : ($i, $j) : there is no tile here.");
 				}
 				else
 				{
