@@ -1,4 +1,4 @@
-public class Map {
+public class Brutus.Map {
     public int mapHeight { public get; private set; }
     public int mapWidth { public get; private set; }
     private HashTable<int, Tile> mapData;
@@ -163,7 +163,7 @@ public class Map {
         }
     }
 
-    public void buildArea (int x1, int y1, int x2, int y2, Building.Type type) {
+    public void buildArea (int x1, int y1, int x2, int y2, Brutus.Building.Type type) {
         if (type.poly_buildable ()) {
             int xm = int.min (x1, x2);
             int xM = int.max (x1, x2);

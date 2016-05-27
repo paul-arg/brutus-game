@@ -1,4 +1,4 @@
-public class Tile {
+public class Brutus.Tile {
     public enum Terrain {
         GRASS,
         FARMABLE,
@@ -50,7 +50,7 @@ public class Tile {
     public int x { public get; private set; }
     public int y { public get; private set; }
     public Tile.Terrain terrain { public get; private set; }
-    public Building ? building { public get; private set; }
+    public Brutus.Building ? building { public get; private set; }
 
     public Tile (Map containerInput, int xInput, int yInput, Tile.Terrain terrainInput) {
         container = containerInput;
@@ -60,12 +60,12 @@ public class Tile {
         building = null;
     }
 
-    public void setBuilding (Building buildingInput) {
+    public void setBuilding (Brutus.Building buildingInput) {
         building = buildingInput;
         container.invalidateZone (x, y, 1);
     }
 
-    public void build (Building.Type typeInput) {
+    public void build (Brutus.Building.Type typeInput) {
         if (!container.hasRoom (x, y, typeInput.size ())) {
             message (@"build : ($x, $y) : there is no room for this building.");
         } else if (terrain == Tile.Terrain.FARMABLE && !container.farmableArea (x, y, typeInput.size ())) {
@@ -73,7 +73,7 @@ public class Tile {
         } else if (!terrain.buildable ()) {
             message (@"build : ($x, $y) : this terrain is not buildable.");
         } else {
-            building = new Building (this, typeInput);
+            building = new House (this, typeInput);
             int i;
             int j;
 

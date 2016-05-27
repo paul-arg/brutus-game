@@ -1,5 +1,5 @@
-public class GameView : Gtk.DrawingArea {
-    private unowned MainWindow container;
+public class Brutus.GameView : Gtk.DrawingArea {
+    private unowned Brutus.MainWindow container;
     public int xIsoClick;
     public int yIsoClick;
 

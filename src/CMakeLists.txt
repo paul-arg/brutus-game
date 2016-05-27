@@ -5,12 +5,21 @@ include (ValaVersion)
 # make sure it's the desired version of vala
 ensure_vala_version ("0.16" MINIMUM)
 
-file (GLOB VALA_FILES *.vala)
+configure_file (${CMAKE_SOURCE_DIR}/config.vala.cmake ${CMAKE_BINARY_DIR}/config.vala)
 
 # files we want to compile
 include (ValaPrecompile)
 vala_precompile (VALA_C ${EXEC_NAME}
-        ${VALA_FILES}
+        ${CMAKE_BINARY_DIR}/config.vala
+        Const.vala
+        GameView.vala
+        InGameGUI.vala
+        MainWindow.vala
+        Map.vala
+        Tile.vala
+        Building/Building.vala
+        Building/Fountain.vala
+        Building/House.vala
     PACKAGES
         gtk+-3.0
     OPTIONS

@@ -1,6 +1,6 @@
 using Gtk;
 
-public class InGameGUI : Grid {
+public class Brutus.InGameGUI : Grid {
     private unowned MainWindow container;
     private RadioButton grassButton;
     private RadioButton forestButton;

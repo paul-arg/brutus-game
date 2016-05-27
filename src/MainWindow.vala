@@ -1,12 +1,12 @@
 using Gtk;
 
-public class MainWindow : Window {
+public class Brutus.MainWindow : Window {
     public Map game_map;
     public GameView game_view;
     public InGameGUI game_GUI;
 
     public Tile.Terrain tileBrush;
-    public Building.Type buildingBrush;
+    public Brutus.Building.Type buildingBrush;
     public int editMode;
 
     public MainWindow (int widthInput, int heightInput) {
@@ -42,7 +42,7 @@ public class MainWindow : Window {
     public static int main (string[] args) {
         Gtk.init (ref args);
 
-        var window = new MainWindow (20, 20);
+        var window = new Brutus.MainWindow (20, 20);
         window.show_all ();
 
         Gtk.main ();
