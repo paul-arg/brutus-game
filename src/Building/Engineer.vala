@@ -1,10 +1,10 @@
-public class Brutus.House : Brutus.Building {
+public class Brutus.Engineer : Brutus.Building {
     private static Gdk.Pixbuf sprite;
 
     construct {
         if (sprite == null) {
             try {
-                sprite = new Gdk.Pixbuf.from_file_at_size ("%s/sprites/house.svg".printf (Build.BRUTUSDIR), TILE_WIDTH*2, -1);
+                sprite = new Gdk.Pixbuf.from_file_at_size ("%s/sprites/engineers_post.svg".printf (Build.BRUTUSDIR), TILE_WIDTH*2, -1);
             } catch (Error e) {
                 critical (e.message);
             }
@@ -34,7 +34,7 @@ public class Brutus.House : Brutus.Building {
     }
 
     public override bool is_poly_buildable () {
-        return true;
+        return false;
     }
 
     public override int get_size () {

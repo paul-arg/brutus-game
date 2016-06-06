@@ -29,4 +29,5 @@ add_subdirectory (src)
 
 # install our .desktop file so the Applications menu will see it
 install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/brutus.desktop DESTINATION ${DATADIR}/applications/)
-install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/sprites/house.svg DESTINATION ${BRUTUSDIR}/sprites/)
+file (GLOB SPRITES ${CMAKE_CURRENT_SOURCE_DIR}/data/sprites/*.svg)
+install (FILES ${SPRITES} DESTINATION ${BRUTUSDIR}/sprites/)

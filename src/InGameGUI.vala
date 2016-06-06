@@ -15,6 +15,8 @@ public class Brutus.InGameGUI : Grid {
     private RadioButton fountainButton;
     private RadioButton marketButton;
     private RadioButton farmButton;
+    private RadioButton prefectureButton;
+    private RadioButton engineerButton;
 
     public void onEditModeToggled () {
         grassButton.get_group ().foreach ((item) => {
@@ -29,6 +31,15 @@ public class Brutus.InGameGUI : Grid {
     }
 
     public InGameGUI (MainWindow containerInput) {
+        var provider = new Gtk.CssProvider ();
+        try {
+            provider.load_from_data (custom_css, custom_css.length);
+            Gtk.StyleContext.add_provider_for_screen (get_screen (), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+        } catch (GLib.Error e) {
+            critical (e.message);
+        }
+
+        get_style_context ().add_class ("panel");
         container = containerInput;
         grassButton = new Gtk.RadioButton.with_label (null, "Grass");
         forestButton = new Gtk.RadioButton.with_label_from_widget (grassButton, "Forest");
@@ -43,6 +54,8 @@ public class Brutus.InGameGUI : Grid {
         fountainButton = new Gtk.RadioButton.with_label_from_widget (roadButton, "Fountain");
         marketButton = new Gtk.RadioButton.with_label_from_widget (roadButton, "Market");
         farmButton = new Gtk.RadioButton.with_label_from_widget (roadButton, "Farm");
+        prefectureButton = new Gtk.RadioButton.with_label_from_widget (roadButton, "Prefecture");
+        engineerButton = new Gtk.RadioButton.with_label_from_widget (roadButton, "Engineer");
 
         tileButton.toggled.connect (() => onEditModeToggled ());
 
@@ -71,23 +84,31 @@ public class Brutus.InGameGUI : Grid {
         });
 
         roadButton.clicked.connect (() => {
-            container.buildingBrush = Building.Type.ROAD;
+            container.buildingBrush = typeof(Road);
         });
 
         houseButton.clicked.connect (() => {
-            container.buildingBrush = Building.Type.HOUSE;
+            container.buildingBrush = typeof(House);
         });
 
         fountainButton.clicked.connect (() => {
-            container.buildingBrush = Building.Type.FOUNTAIN;
+            container.buildingBrush = typeof(Fountain);
         });
 
         marketButton.clicked.connect (() => {
-            container.buildingBrush = Building.Type.MARKET;
+            container.buildingBrush = typeof(Market);
         });
 
         farmButton.clicked.connect (() => {
-            container.buildingBrush = Building.Type.FARM;
+            container.buildingBrush = typeof(Farm);
+        });
+
+        prefectureButton.clicked.connect (() => {
+            container.buildingBrush = typeof(Prefecture);
+        });
+
+        engineerButton.clicked.connect (() => {
+            container.buildingBrush = typeof(Engineer);
         });
 
         grassButton.set_mode (false);
@@ -103,6 +124,8 @@ public class Brutus.InGameGUI : Grid {
         fountainButton.set_mode (false);
         marketButton.set_mode (false);
         farmButton.set_mode (false);
+        prefectureButton.set_mode (false);
+        engineerButton.set_mode (false);
 
         attach (grassButton, 0, 0, 1, 1);
         attach (forestButton, 1, 0, 1, 1);
@@ -117,6 +140,8 @@ public class Brutus.InGameGUI : Grid {
         attach (fountainButton, 0, 5, 1, 1);
         attach (marketButton, 1, 5, 1, 1);
         attach (farmButton, 0, 6, 1, 1);
+        attach (prefectureButton, 0, 7, 1, 1);
+        attach (engineerButton, 1, 7, 1, 1);
 
         halign = Gtk.Align.END;
 

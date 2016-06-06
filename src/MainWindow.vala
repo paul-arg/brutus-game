@@ -6,17 +6,17 @@ public class Brutus.MainWindow : Window {
     public InGameGUI game_GUI;
 
     public Tile.Terrain tileBrush;
-    public Brutus.Building.Type buildingBrush;
     public int editMode;
+    public Type buildingBrush;
 
     public MainWindow (int widthInput, int heightInput) {
         title = "brutus-game";
-        border_width = 10;
         window_position = WindowPosition.CENTER;
         set_default_size (850, 550);
         destroy.connect (Gtk.main_quit);
 
-        var box = new Box (Gtk.Orientation.HORIZONTAL, 0);
+        var grid = new Grid ();
+        grid.orientation = Gtk.Orientation.HORIZONTAL;
 
         game_view = new GameView (this);
         game_GUI = new InGameGUI (this);
@@ -25,18 +25,18 @@ public class Brutus.MainWindow : Window {
         game_view.hexpand = true;
         game_view.vexpand = true;
 
-        box.add (game_view);
-        box.add (game_GUI);
+        grid.add (game_view);
+        grid.add (game_GUI);
 
-        add (box);
+        add (grid);
 
         tileBrush = Tile.Terrain.GRASS;
-        buildingBrush = Building.Type.ROAD;
+        buildingBrush = typeof(Road);
         editMode = 1;
 
         /* testing */
         game_map.newTile (Tile.Terrain.FOREST, 2, 5);
-        game_map.getTile (2, 5).build (Building.Type.ROAD);
+        game_map.buildArea (2, 5, 2, 5, typeof(Road));
     }
 
     public static int main (string[] args) {

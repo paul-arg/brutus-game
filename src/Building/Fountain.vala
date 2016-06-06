@@ -1,7 +1,13 @@
 public class Brutus.Fountain : Brutus.Building {
-    public  Fountain (Brutus.Tile supportInput, Brutus.Building.Type typeInput) {
-        support = supportInput;
-        type = typeInput;
+    private static Gdk.Pixbuf sprite;
+    construct {
+        if (sprite == null) {
+            try {
+                sprite = new Gdk.Pixbuf.from_file_at_size ("%s/sprites/fountain.svg".printf (Build.BRUTUSDIR), TILE_WIDTH*2, -1);
+            } catch (Error e) {
+                critical (e.message);
+            }
+        }
     }
 
     public override void draw (Cairo.Context cr) {
@@ -11,19 +17,17 @@ public class Brutus.Fountain : Brutus.Building {
         int a = support.x * TILE_WIDTH - support.y * TILE_WIDTH; /* offset x */
         int b = support.x * TILE_HEIGHT + support.y * TILE_HEIGHT; /* offset y */
 
-        if (type == Building.Type.ROAD) {
-            cr.set_source_rgb (1, 0, 0);
-        } else {
-            cr.set_source_rgb (0.6, 0.6, 0.6);
-        }
+        cr.set_source_rgb (0.6, 0.6, 0.6);
 
-        var size = type.size ();
+        var size = get_size ();
         cr.move_to (mapHeight * TILE_WIDTH + a, 2 * TILE_HEIGHT + b - t);
         cr.line_to (mapHeight * TILE_WIDTH + a + size * TILE_WIDTH - u, 2 * TILE_HEIGHT + b - size * TILE_HEIGHT);
         cr.line_to (mapHeight * TILE_WIDTH + a, 2 * TILE_HEIGHT + b - 2 * size * TILE_HEIGHT + t);
         cr.line_to (mapHeight * TILE_WIDTH + a - size * TILE_WIDTH + u, 2 * TILE_HEIGHT + b - size * TILE_HEIGHT);
         cr.line_to (mapHeight * TILE_WIDTH + a, 2 * TILE_HEIGHT + b - t);
         cr.fill ();
+        Gdk.cairo_set_source_pixbuf (cr, sprite, mapHeight * TILE_WIDTH + a - sprite.width/2, 2 * TILE_HEIGHT + b - sprite.height);
+        cr.paint ();
     }
 
     public override int get_real_height () {
@@ -31,10 +35,19 @@ public class Brutus.Fountain : Brutus.Building {
     }
 
     public override bool is_poly_buildable () {
-        return true;
+        return false;
     }
 
     public override int get_size () {
         return 1;
+    }
+
+    public override void build (Brutus.Tile support) {
+        if (this.support != null) {
+            critical ("Already built!");
+            return;
+        }
+
+        this.support = support;
     }
 }

@@ -20,6 +20,11 @@ vala_precompile (VALA_C ${EXEC_NAME}
         Building/Building.vala
         Building/Fountain.vala
         Building/House.vala
+        Building/Road.vala
+        Building/Farm.vala
+        Building/Prefecture.vala
+        Building/Engineer.vala
+        Building/Market.vala
     PACKAGES
         gtk+-3.0
     OPTIONS

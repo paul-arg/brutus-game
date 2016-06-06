@@ -1,4 +1,4 @@
-public class Brutus.Map {
+public class Brutus.Map : GLib.Object {
     public int mapHeight { public get; private set; }
     public int mapWidth { public get; private set; }
     private HashTable<int, Tile> mapData;
@@ -25,7 +25,7 @@ public class Brutus.Map {
         }
     }
 
-    public Tile ? getTile (int x, int y)
+    public unowned Tile ? getTile (int x, int y)
     {
         return mapData.get (x + y * mapWidth);
     }
@@ -163,8 +163,9 @@ public class Brutus.Map {
         }
     }
 
-    public void buildArea (int x1, int y1, int x2, int y2, Brutus.Building.Type type) {
-        if (type.poly_buildable ()) {
+    public void buildArea (int x1, int y1, int x2, int y2, Type type) {
+        var needed_building = (Brutus.Building) GLib.Object.new (type, null);
+        if (needed_building.is_poly_buildable ()) {
             int xm = int.min (x1, x2);
             int xM = int.max (x1, x2);
             int ym = int.min (y1, y2);
@@ -179,7 +180,7 @@ public class Brutus.Map {
                     } else if (getTile (i, j) == null) {
                         message (@"build : ($i, $j) : there is no tile here.");
                     } else {
-                        getTile (i, j).build (type);
+                        getTile (i, j).build ((Brutus.Building) GLib.Object.new (type));
                     }
                 }
             }
@@ -189,7 +190,7 @@ public class Brutus.Map {
             } else if (getTile (x2, y2) == null) {
                 message (@"build : ($x2, $y2) : there is no tile here.");
             } else {
-                getTile (x2, y2).build (type);
+                getTile (x2, y2).build (needed_building);
             }
         }
     }
@@ -219,6 +220,15 @@ public class Brutus.Map {
             isoToScreenY (x, y, TILE_HEIGHT, TILE_WIDTH, mapHeight * TILE_WIDTH, 0) - 2 * (size - 1) * TILE_HEIGHT,
             2 * size * TILE_WIDTH,
             2 * size * TILE_HEIGHT
+            );
+    }
+
+    public void invalidateBuilding (int x, int y, int size, int real_height) {
+        container.game_view.queue_draw_area (
+            isoToScreenX (x, y, TILE_HEIGHT, TILE_WIDTH, mapHeight * TILE_WIDTH, 0) - size * TILE_WIDTH,
+            isoToScreenY (x, y, TILE_HEIGHT, TILE_WIDTH, mapHeight * TILE_WIDTH, 0) - real_height + 2 * size * TILE_HEIGHT,
+            2 * size * TILE_WIDTH,
+            real_height
             );
     }
 

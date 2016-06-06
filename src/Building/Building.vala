@@ -1,4 +1,5 @@
 public abstract class Brutus.Building : GLib.Object {
+/*
     public enum Type {
         ROAD,
         HOUSE,
@@ -56,13 +57,13 @@ public abstract class Brutus.Building : GLib.Object {
                     assert_not_reached ();
             }
         }
-    }
+    }*/
 
-    public Building.Type type;
     public Tile support;
 
     public abstract void draw (Cairo.Context cr);
     public abstract int get_real_height ();
     public abstract bool is_poly_buildable ();
     public abstract int get_size ();
+    public abstract void build (Brutus.Tile support);
 }

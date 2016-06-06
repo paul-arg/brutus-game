@@ -13,7 +13,7 @@ public class Brutus.GameView : Gtk.DrawingArea {
     public override bool draw (Cairo.Context cr) {
         if (container.game_map != null) {
             cr.set_line_width (3.0);
-
+            container.game_map.drawGrid (cr);
             for (int i = 0; i < container.game_map.mapWidth; i++) {
                 for (int j = 0; j < container.game_map.mapHeight; j++) {
                     if (container.game_map.getTile (i, j) != null) {
@@ -25,9 +25,6 @@ public class Brutus.GameView : Gtk.DrawingArea {
                     }
                 }
             }
-
-            cr.set_line_width (3.0);
-            container.game_map.drawGrid (cr);
         }
 
         return true;
