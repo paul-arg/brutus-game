@@ -1,5 +1,5 @@
-public const int TILE_WIDTH = 32;
-public const int TILE_HEIGHT = 18;
+public const int TILE_WIDTH = 45; //32
+public const int TILE_HEIGHT = 26; //18
 public const int OFFSET_X = 192;
 public const int OFFSET_Y = 0;
 
