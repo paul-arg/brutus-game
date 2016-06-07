@@ -12,8 +12,6 @@ public class Brutus.Engineer : Brutus.Building {
     }
 
     public override void draw (Cairo.Context cr) {
-        int t = 5;
-        int u = (int)Math.floor ((t * TILE_WIDTH) / TILE_HEIGHT);
         int mapHeight = support.container.mapHeight;
         int a = support.x * TILE_WIDTH - support.y * TILE_WIDTH; /* offset x */
         int b = support.x * TILE_HEIGHT + support.y * TILE_HEIGHT; /* offset y */
