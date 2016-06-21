@@ -2,6 +2,7 @@ public class Brutus.Market : Brutus.Building {
     private static Gdk.Pixbuf sprite;
 
     construct {
+        size = 2;
         if (sprite == null) {
             try {
                 sprite = new Gdk.Pixbuf.from_file_at_size ("%s/sprites/market.svg".printf (Build.BRUTUSDIR), TILE_WIDTH*2*2, -1);
@@ -22,14 +23,6 @@ public class Brutus.Market : Brutus.Building {
 
     public override int get_real_height () {
         return sprite.height;
-    }
-
-    public override bool is_poly_buildable () {
-        return false;
-    }
-
-    public override int get_size () {
-        return 2;
     }
 
     public override void build (Brutus.Tile support) {

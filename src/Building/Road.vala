@@ -16,9 +16,10 @@ public class Brutus.Road : Brutus.Building {
     private static Gdk.Pixbuf i_south;
     private static Gdk.Pixbuf o_alone;
 
-    private unowned Gdk.Pixbuf sprite;
+    private unowned Gdk.Pixbuf sprite { get; set; }
 
     construct {
+        is_poly_buildable = true;
         if (l_north_south == null) {
             try {
                 var sprite = new Gdk.Pixbuf.from_file_at_size ("%s/sprites/road.svg".printf (Build.BRUTUSDIR), TILE_WIDTH*2*16, -1);
@@ -43,10 +44,17 @@ public class Brutus.Road : Brutus.Building {
             }
         }
 
-        sprite = o_alone;
+        nighboor_buildings_changed.connect (() => nighboor_changed ());
+        notify["sprite"].connect (() => {
+            queue_redraw ();
+        });
     }
 
     public override void draw (Cairo.Context cr) {
+        if (sprite == null) {
+            nighboor_changed ();
+        }
+
         int mapHeight = support.container.mapHeight;
         int a = support.x * TILE_WIDTH - support.y * TILE_WIDTH; /* offset x */
         int b = support.x * TILE_HEIGHT + support.y * TILE_HEIGHT; /* offset y */
@@ -59,46 +67,23 @@ public class Brutus.Road : Brutus.Building {
         return l_north_south.height;
     }
 
-    public override bool is_poly_buildable () {
-        return true;
-    }
+    private bool is_road_at (int x, int y) {
+        unowned Tile tile = support.container.getTile (x, y);
 
-    public override int get_size () {
-        return 1;
+        if (tile != null && tile.building != null) {
+            if (tile.building is Brutus.Road) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void nighboor_changed () {
-        unowned Tile north_tile = support.container.getTile (support.x-1, support.y);
-        unowned Tile south_tile = support.container.getTile (support.x+1, support.y);
-        unowned Tile east_tile = support.container.getTile (support.x, support.y-1);
-        unowned Tile west_tile = support.container.getTile (support.x, support.y+1);
-        bool north_road = false;
-        if (north_tile != null && north_tile.building != null) {
-            if (north_tile.building is Brutus.Road) {
-                north_road = true;
-            }
-        }
-
-        bool south_road = false;
-        if (south_tile != null && south_tile.building != null) {
-            if (south_tile.building is Brutus.Road) {
-                south_road = true;
-            }
-        }
-
-        bool west_road = false;
-        if (west_tile != null && west_tile.building != null) {
-            if (west_tile.building is Brutus.Road) {
-                west_road = true;
-            }
-        }
-
-        bool east_road = false;
-        if (east_tile != null && east_tile.building != null) {
-            if (east_tile.building is Brutus.Road) {
-                east_road = true;
-            }
-        }
+        bool north_road = is_road_at (support.x-1, support.y);
+        bool south_road = is_road_at (support.x+1, support.y);
+        bool east_road = is_road_at (support.x, support.y-1);
+        bool west_road = is_road_at (support.x, support.y+1);
 
         if (north_road && south_road && west_road && east_road) {
             sprite = x_cross;
@@ -128,7 +113,9 @@ public class Brutus.Road : Brutus.Building {
             sprite = i_west;
         } else if (!north_road && !south_road && !west_road && east_road) {
             sprite = i_east;
-        } else if (!north_road && !south_road && !west_road && !east_road) {
+        } else if (north_road && !south_road && !west_road && !east_road) {
+            sprite = i_north;
+        } else {
             sprite = o_alone;
         }
     }
@@ -140,26 +127,6 @@ public class Brutus.Road : Brutus.Building {
         }
 
         this.support = support;
-        nighboor_changed ();
-        unowned Tile north_tile = support.container.getTile (support.x-1, support.y);
-        unowned Tile south_tile = support.container.getTile (support.x+1, support.y);
-        unowned Tile west_tile = support.container.getTile (support.x, support.y-1);
-        unowned Tile east_tile = support.container.getTile (support.x, support.y+1);
-        if (north_tile != null) {
-            north_tile.notify["building"].connect (() => nighboor_changed ());
-        }
-
-        if (south_tile != null) {
-            south_tile.notify["building"].connect (() => nighboor_changed ());
-        }
-
-        if (west_tile != null) {
-            west_tile.notify["building"].connect (() => nighboor_changed ());
-        }
-
-        if (east_tile != null) {
-            east_tile.notify["building"].connect (() => nighboor_changed ());
-        }
     }
 }
 

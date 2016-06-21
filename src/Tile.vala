@@ -66,7 +66,7 @@ public class Brutus.Tile : GLib.Object {
     }
 
     public void build (Brutus.Building needed_building) {
-        var building_size = needed_building.get_size ();
+        var building_size = needed_building.size;
         if (!container.hasRoom (x, y, building_size)) {
             message (@"build : ($x, $y) : there is no room for this building.");
         } else if (terrain == Tile.Terrain.FARMABLE && !container.farmableArea (x, y, building_size)) {
@@ -86,6 +86,7 @@ public class Brutus.Tile : GLib.Object {
             needed_building.build (this);
             message (@"build : ($x, $y) : $(needed_building.get_type ().name ()) created.");
             redraw_building_area ();
+            needed_building.queue_redraw.connect (() => redraw_building_area ());
         }
     }
 
@@ -93,7 +94,7 @@ public class Brutus.Tile : GLib.Object {
         if (building == null) {
             message (@"destroyBuilding : ($x, $y) : there is no building to destroy here.");
         } else {
-            var size = building.get_size ();
+            var size = building.size;
             var real_height = building.get_real_height ();
             var name = building.get_type ().name ();
             var xS = building.support.x;
@@ -108,12 +109,12 @@ public class Brutus.Tile : GLib.Object {
             }
 
             message (@"destroyBuilding : ($xS, $yS) : $(name) destroyed.");
-            container.invalidateBuilding (x, y, size, real_height);
+            container.invalidateBuilding (xS, yS, size, real_height);
         }
     }
 
     public void redraw_building_area () {
-        container.invalidateBuilding (x, y, building.get_size (), building.get_real_height ());
+        container.invalidateBuilding (x, y, building.size, building.get_real_height ());
     }
 
     public void draw (Cairo.Context cr) {

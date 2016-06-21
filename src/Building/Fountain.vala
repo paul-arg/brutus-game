@@ -3,7 +3,7 @@ public class Brutus.Fountain : Brutus.Building {
     construct {
         if (sprite == null) {
             try {
-                sprite = new Gdk.Pixbuf.from_file_at_size ("%s/sprites/fountain.svg".printf (Build.BRUTUSDIR), TILE_WIDTH*2, -1);
+                sprite = new Gdk.Pixbuf.from_file_at_size ("%s/sprites/fountain.svg".printf (Build.BRUTUSDIR), 2*TILE_WIDTH, -1);
             } catch (Error e) {
                 critical (e.message);
             }
@@ -21,14 +21,6 @@ public class Brutus.Fountain : Brutus.Building {
 
     public override int get_real_height () {
         return sprite.height;
-    }
-
-    public override bool is_poly_buildable () {
-        return false;
-    }
-
-    public override int get_size () {
-        return 1;
     }
 
     public override void build (Brutus.Tile support) {

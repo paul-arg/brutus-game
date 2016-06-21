@@ -21,11 +21,14 @@ public class Brutus.MainWindow : Window {
         game_view = new GameView (this);
         game_GUI = new InGameGUI (this);
         game_map = new Map (this, widthInput, heightInput);
+        var scrolled_window = new Gtk.ScrolledWindow (null, null);
+        scrolled_window.expand = true;
+        scrolled_window.add_with_viewport (game_view);
 
         game_view.hexpand = true;
         game_view.vexpand = true;
 
-        grid.add (game_view);
+        grid.add (scrolled_window);
         grid.add (game_GUI);
 
         add (grid);

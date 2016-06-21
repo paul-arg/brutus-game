@@ -2,9 +2,10 @@ public class Brutus.Farm : Brutus.Building {
     private static Gdk.Pixbuf sprite;
 
     construct {
+        size = 3;
         if (sprite == null) {
             try {
-                sprite = new Gdk.Pixbuf.from_file_at_size ("%s/sprites/farm.svg".printf (Build.BRUTUSDIR), TILE_WIDTH*2*3, -1);
+                sprite = new Gdk.Pixbuf.from_file_at_size ("%s/sprites/farm.svg".printf (Build.BRUTUSDIR), 2*TILE_WIDTH*3, -1);
             } catch (Error e) {
                 critical (e.message);
             }
@@ -22,14 +23,6 @@ public class Brutus.Farm : Brutus.Building {
 
     public override int get_real_height () {
         return sprite.height;
-    }
-
-    public override bool is_poly_buildable () {
-        return false;
-    }
-
-    public override int get_size () {
-        return 3;
     }
 
     public override void build (Brutus.Tile support) {

@@ -1,4 +1,5 @@
 public class Brutus.Map : GLib.Object {
+
     public int mapHeight { public get; private set; }
     public int mapWidth { public get; private set; }
     private HashTable<int, Tile> mapData;
@@ -6,9 +7,17 @@ public class Brutus.Map : GLib.Object {
 
     public Map (MainWindow containerInput, int mapWidthInput, int mapHeightInput) {
         container = containerInput;
-        mapData = new HashTable<int, Tile> (direct_hash, direct_equal);
         mapHeight = mapHeightInput;
         mapWidth = mapWidthInput;
+        for (int x = 0; x < mapHeight; x++) {
+            for (int y = 0; y < mapWidth; y++) {
+                newTile (Tile.Terrain.GRASS, x, y);
+            }
+        }
+    }
+
+    construct {
+        mapData = new HashTable<int, Tile> (direct_hash, direct_equal);
     }
 
     public bool beyondLimits (int x, int y) {
@@ -19,7 +28,8 @@ public class Brutus.Map : GLib.Object {
         if (beyondLimits (x, y)) {
             message (@"newTile : this is beyond the map limits.");
         } else {
-            mapData.set (x + y * mapWidth, new Tile (this, x, y, terrainInput));
+            var tile = new Tile (this, x, y, terrainInput);
+            mapData.set (x + y * mapWidth, tile);
             message (@"newTile : ($x, $y) : $(terrainInput.to_string()) tile created.");
             invalidateZone (x, y, 1);
         }
@@ -136,6 +146,28 @@ public class Brutus.Map : GLib.Object {
         }
     }
 
+    private void building_changed (Tile support) {
+        unowned Tile tile = support.container.getTile (support.x-1, support.y);
+        if (tile != null && tile.building != null) {
+            tile.building.nighboor_buildings_changed ();
+        }
+
+        tile = support.container.getTile (support.x+1, support.y);
+        if (tile != null && tile.building != null) {
+            tile.building.nighboor_buildings_changed ();
+        }
+
+        tile = support.container.getTile (support.x, support.y-1);
+        if (tile != null && tile.building != null) {
+            tile.building.nighboor_buildings_changed ();
+        }
+
+        tile = support.container.getTile (support.x, support.y+1);
+        if (tile != null && tile.building != null) {
+            tile.building.nighboor_buildings_changed ();
+        }
+    }
+
     public void deleteTile (int x, int y) {
         if (beyondLimits (x, y)) {
             message (@"deleteTile : this is beyond the map limits.");
@@ -165,7 +197,7 @@ public class Brutus.Map : GLib.Object {
 
     public void buildArea (int x1, int y1, int x2, int y2, Type type) {
         var needed_building = (Brutus.Building) GLib.Object.new (type, null);
-        if (needed_building.is_poly_buildable ()) {
+        if (needed_building.is_poly_buildable) {
             int xm = int.min (x1, x2);
             int xM = int.max (x1, x2);
             int ym = int.min (y1, y2);
@@ -175,22 +207,27 @@ public class Brutus.Map : GLib.Object {
 
             for (i = xm; i <= xM; i++) {
                 for (j = ym; j <= yM; j++) {
+                    var tile = getTile (i, j);
                     if (beyondLimits (i, j)) {
                         message (@"build : this is beyond the map limits.");
-                    } else if (getTile (i, j) == null) {
+                    } else if (tile == null) {
                         message (@"build : ($i, $j) : there is no tile here.");
                     } else {
-                        getTile (i, j).build ((Brutus.Building) GLib.Object.new (type));
+                        var building = (Brutus.Building) GLib.Object.new (type);
+                        tile.build (building);
+                        building_changed (tile);
                     }
                 }
             }
         } else {
+            var tile = getTile (x2, y2);
             if (beyondLimits (x2, y2)) {
                 message (@"build : this is beyond the map limits.");
-            } else if (getTile (x2, y2) == null) {
+            } else if (tile == null) {
                 message (@"build : ($x2, $y2) : there is no tile here.");
             } else {
-                getTile (x2, y2).build (needed_building);
+                tile.build (needed_building);
+                building_changed (tile);
             }
         }
     }
@@ -205,10 +242,12 @@ public class Brutus.Map : GLib.Object {
 
         for (i = xm; i <= xM; i++) {
             for (j = ym; j <= yM; j++) {
-                if (getTile (i, j) == null) {
+                var tile = getTile (i, j);
+                if (tile == null) {
                     debug (@"destroyBuilding : ($i, $j) : there is no tile here.");
                 } else {
-                    getTile (i, j).destroyBuilding ();
+                    tile.destroyBuilding ();
+                    building_changed (tile);
                 }
             }
         }
@@ -226,7 +265,7 @@ public class Brutus.Map : GLib.Object {
     public void invalidateBuilding (int x, int y, int size, int real_height) {
         container.game_view.queue_draw_area (
             isoToScreenX (x, y, TILE_HEIGHT, TILE_WIDTH, mapHeight * TILE_WIDTH, 0) - size * TILE_WIDTH,
-            isoToScreenY (x, y, TILE_HEIGHT, TILE_WIDTH, mapHeight * TILE_WIDTH, 0) - real_height + 2 * size * TILE_HEIGHT,
+            isoToScreenY (x, y, TILE_HEIGHT, TILE_WIDTH, mapHeight * TILE_WIDTH, 0) + 2 * TILE_HEIGHT - real_height,
             2 * size * TILE_WIDTH,
             real_height
             );

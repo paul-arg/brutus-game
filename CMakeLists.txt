@@ -22,6 +22,7 @@ find_package(PkgConfig)
 pkg_check_modules(DEPS REQUIRED gtk+-3.0)
 
 add_definitions(${DEPS_CFLAGS})
+add_definitions (-w)
 link_libraries(${DEPS_LIBRARIES} m)
 link_directories(${DEPS_LIBRARY_DIRS})
 
@@ -30,4 +31,6 @@ add_subdirectory (src)
 # install our .desktop file so the Applications menu will see it
 install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/brutus.desktop DESTINATION ${DATADIR}/applications/)
 file (GLOB SPRITES ${CMAKE_CURRENT_SOURCE_DIR}/data/sprites/*.svg)
+file (GLOB MENUS ${CMAKE_CURRENT_SOURCE_DIR}/data/menus/*.svg)
 install (FILES ${SPRITES} DESTINATION ${BRUTUSDIR}/sprites/)
+install (FILES ${MENUS} DESTINATION ${BRUTUSDIR}/menus/)

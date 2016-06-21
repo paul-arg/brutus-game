@@ -24,14 +24,6 @@ public class Brutus.Prefecture : Brutus.Building {
         return sprite.height;
     }
 
-    public override bool is_poly_buildable () {
-        return false;
-    }
-
-    public override int get_size () {
-        return 1;
-    }
-
     public override void build (Brutus.Tile support) {
         if (this.support != null) {
             critical ("Already built!");

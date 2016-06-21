@@ -11,6 +11,12 @@ public class Brutus.GameView : Gtk.DrawingArea {
     }
 
     public override bool draw (Cairo.Context cr) {
+        int width = get_allocated_width ();
+        int height = get_allocated_height ();
+
+        cr.set_source_rgb (0, 0, 0);
+        cr.rectangle (0, 0, width, height);
+        cr.fill_preserve ();
         if (container.game_map != null) {
             cr.set_line_width (3.0);
             container.game_map.drawGrid (cr);
@@ -77,12 +83,13 @@ public class Brutus.GameView : Gtk.DrawingArea {
         var height = get_allocated_height ();
         if (event.x < 5) {
             warning ("Scroll left");
-        } else if (event.x > width - 5) {
+        } else if (width - event.x < 5) {
             warning ("Scroll right");
         }
+
         if (event.y < 5) {
             warning ("Scroll up");
-        } else if (event.y > height - 5) {
+        } else if (height - event.y < 5) {
             warning ("Scroll down");
         }
 
