@@ -1,5 +1,6 @@
-# brutus-game
-This is a Caesar3-like game under development.
+# Brutus
+![Brutus Icon](https://raw.githubusercontent.com/pologram/brutus-game/master/data/brutus.svg)
+This is a City-Building (Caesar3-like) game under development.
 ---
 ## How to
 ### build and launch
@@ -7,7 +8,8 @@ This is a Caesar3-like game under development.
     cd build
     cmake ..
     make
-    ./brutus
+    sudo make install
+    brutus
 ---
 ### use
 For now you can only add/remove tiles and build/destroy buildings.
