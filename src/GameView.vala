@@ -1,10 +1,15 @@
+using Gee;
+
 public class Brutus.GameView : Gtk.DrawingArea {
     private unowned Brutus.MainWindow container;
     public int xIsoClick;
     public int yIsoClick;
+    public List<int> mouse_path;
+    public bool buttonPressed = false;
 
     public GameView (MainWindow containerInput) {
         container = containerInput;
+        mouse_path = new List<int>();
         events |= Gdk.EventMask.BUTTON_PRESS_MASK;
         events |= Gdk.EventMask.BUTTON_RELEASE_MASK;
         events |= Gdk.EventMask.POINTER_MOTION_MASK;
@@ -50,7 +55,9 @@ public class Brutus.GameView : Gtk.DrawingArea {
     public override bool button_release_event (Gdk.EventButton event) {
         int xIsoRelease = screenToIsoX ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0);
         int yIsoRelease = screenToIsoY ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0);
-
+        if (event.button == 1) {
+                buttonPressed = false;
+        }
         /*
          * cout << "    released at " << (int) event.x << ", " << (int) event.y << endl;
          * cout << "    released at iso " << xIso << ", " << yIso << endl;
@@ -67,7 +74,8 @@ public class Brutus.GameView : Gtk.DrawingArea {
 
         if (container.editMode == 1) {
             if (event.button == 1) {
-                container.game_map.buildArea (xIsoClick, yIsoClick, xIsoRelease, yIsoRelease, container.buildingBrush);
+                //container.game_map.buildArea (xIsoClick, yIsoClick, xIsoRelease, yIsoRelease, container.buildingBrush);
+                L_path(mouse_path, xIsoClick, yIsoClick, xIsoRelease, yIsoRelease);
             }
 
             if (event.button == 3) {
@@ -93,8 +101,65 @@ public class Brutus.GameView : Gtk.DrawingArea {
             warning ("Scroll down");
         }
 
+        int candidate = screenToIsoX ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0)
+            + screenToIsoY ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0) * container.game_map.mapWidth;
+            mouse_path.append (candidate);
+            warning("%d",(int)mouse_path.length() );
+
+
         return true;
     }
+
+    public void L_path(List<int> list, int x1, int y1, int x2, int y2) {
+        int map_width = container.game_map.mapWidth;
+        int left_counter = 0;
+        int right_counter = 0;
+        int xm = int.min(x1, x2);
+        int xM = int.max(x1, x2);
+        int ym = int.min(y1, y2);
+        int yM = int.max(y1, y2);
+        foreach(int element in list) {
+            if (is_left_corner(x1, y1, x2, y2, bijectionX(element, map_width), bijectionY(element, map_width))) {
+                left_counter++;
+                warning("left ++");
+            } else if (is_right_corner(x1, y1, x2, y2, bijectionX(element, map_width), bijectionY(element, map_width))) {
+                right_counter++;
+                warning("right ++");
+            }
+            //list.remove(element);
+        }
+
+        if (right_counter > left_counter) {
+            container.game_map.buildArea (xm, ym, xM, ym, container.buildingBrush);
+            container.game_map.buildArea (xM, ym, xM, yM, container.buildingBrush);
+        }
+        else {
+            container.game_map.buildArea (xm, ym, xm, yM, container.buildingBrush);
+            container.game_map.buildArea (xm, yM, xM, ym, container.buildingBrush);
+        }
+    }
+}
+
+public bool is_left_corner(int x1, int y1, int x2, int y2, int x, int y) {
+    int xm = int.min(x1, x2);
+    int yM = int.max(y1, y2);
+
+    return (x == xm || y == yM);
+}
+
+public bool is_right_corner(int x1, int y1, int x2, int y2, int x, int y) {
+    int xM = int.max(x1, x2);
+    int ym = int.min(y1, y2);
+
+    return (x == xM || y == ym);
+}
+
+public int bijectionX(int n, int width) {
+    return n % width;
+}
+
+public int bijectionY(int n, int width) {
+    return n - (n % width);
 }
 
 public static int screenToIsoX (int xScreen, int yScreen, int tileHeight, int tileWidth, int offsetX, int offsetY) {
