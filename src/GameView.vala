@@ -2,12 +2,13 @@ public class Brutus.GameView : Gtk.DrawingArea {
     private unowned Brutus.MainWindow container;
     public int xIsoClick;
     public int yIsoClick;
-    public HashTable<int, int> mouse_path;
-    public bool buttonPressed = false;
+    public int xIsoRelease;
+    public int yIsoRelease;
+    public double xDoubleIsoRelease;
+    public double yDoubleIsoRelease;
 
     public GameView (MainWindow containerInput) {
         container = containerInput;
-        mouse_path = new HashTable<int, int> (direct_hash, direct_equal);
         events |= Gdk.EventMask.BUTTON_PRESS_MASK;
         events |= Gdk.EventMask.BUTTON_RELEASE_MASK;
         events |= Gdk.EventMask.POINTER_MOTION_MASK;
@@ -47,23 +48,17 @@ public class Brutus.GameView : Gtk.DrawingArea {
          * message(@"    clicked at iso $xIsoClick ,$yIsoClick");
          */
 
-        if (event.button == 1) {
-                buttonPressed = true;
-        }
-
         return true;
     }
 
     public override bool button_release_event (Gdk.EventButton event) {
-        int xIsoRelease = screenToIsoX ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0);
-        int yIsoRelease = screenToIsoY ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0);
-        if (event.button == 1) {
-                buttonPressed = false;
-        }
-        /*
-         * cout << "    released at " << (int) event.x << ", " << (int) event.y << endl;
-         * cout << "    released at iso " << xIso << ", " << yIso << endl;
-         */
+        xIsoRelease = screenToIsoX ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0);
+        yIsoRelease = screenToIsoY ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0);
+        xDoubleIsoRelease = screenToDoubleIsoX ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0);
+        yDoubleIsoRelease = screenToDoubleIsoY ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0);
+
+        warning("release %f, %f", xDoubleIsoRelease, yDoubleIsoRelease);
+
         if (container.editMode == 0) {
             if (event.button == 1) {
                 container.game_map.newTileArea (xIsoClick, yIsoClick, xIsoRelease, yIsoRelease, container.tileBrush);
@@ -76,14 +71,26 @@ public class Brutus.GameView : Gtk.DrawingArea {
 
         if (container.editMode == 1) {
             if (event.button == 1) {
-                //container.game_map.buildArea (xIsoClick, yIsoClick, xIsoRelease, yIsoRelease, container.buildingBrush);
-                L_path(mouse_path, xIsoClick, yIsoClick, xIsoRelease, yIsoRelease);
+                if (container.buildingBrush == typeof(Brutus.Road)) {
+                    L_path(xIsoClick, yIsoClick, xIsoRelease, yIsoRelease);
+                } else {
+                container.game_map.buildArea (xIsoClick, yIsoClick, xIsoRelease, yIsoRelease, container.buildingBrush);
+                }
             }
 
             if (event.button == 3) {
                 container.game_map.destroyArea (xIsoClick, yIsoClick, xIsoRelease, yIsoRelease);
             }
         }
+
+        if (is_right_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)){
+            warning("right mid");}
+        if (is_left_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)){
+            warning("left mid");}
+        if (is_up_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)){
+            warning("up mid");}
+        if (is_down_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)){
+            warning("down mid");}
 
         return true;
     }
@@ -92,69 +99,63 @@ public class Brutus.GameView : Gtk.DrawingArea {
         var width = get_allocated_width ();
         var height = get_allocated_height ();
         if (event.x < 5) {
-            //warning ("Scroll left");
+            warning ("Scroll left");
         } else if (width - event.x < 5) {
-            //warning ("Scroll right");
+            warning ("Scroll right");
         }
 
         if (event.y < 5) {
-            //warning ("Scroll up");
+            warning ("Scroll up");
         } else if (height - event.y < 5) {
-            //warning ("Scroll down");
+            warning ("Scroll down");
         }
-
-        int candidate = screenToIsoX ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0)
-            + screenToIsoY ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0) * container.game_map.mapWidth;
-        if (buttonPressed && !(mouse_path.contains(candidate))) {
-            mouse_path.insert (candidate, candidate);
-            warning("mouse_path length %d",(int)mouse_path.length );
-        }
-
 
         return true;
     }
 
-    public void L_path(HashTable<int, int> list, int x1, int y1, int x2, int y2) {
-        int map_width = container.game_map.mapWidth;
-        int left_counter = 0;
-        int right_counter = 0;
+    public void L_path(int x1, int y1, int x2, int y2) {
         int xm = int.min(x1, x2);
         int xM = int.max(x1, x2);
         int ym = int.min(y1, y2);
         int yM = int.max(y1, y2);
-        foreach(int element in list.get_keys()) {
-            if (is_left_corner(x1, y1, x2, y2, bijectionX(element, map_width), bijectionY(element, map_width))) {
-                left_counter++;
-            } else if (is_right_corner(x1, y1, x2, y2, bijectionX(element, map_width), bijectionY(element, map_width))) {
-                right_counter++;
-            }
-            warning("left %d right %d", left_counter, right_counter);
-            list.remove_all();
-        }
 
-        if (right_counter >= left_counter) {
+        if (((x1 == xM && y1 == yM) || (x2 == xM && y2 == yM)) && is_right_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)) { //>path
             container.game_map.buildArea (xm, ym, xM, ym, container.buildingBrush);
             container.game_map.buildArea (xM, ym, xM, yM, container.buildingBrush);
+            warning(">");
         }
-        else {
+        else if (((x1 == xM && y1 == yM) || (x2 == xM && y2 == yM)) && is_left_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)){ //<path
             container.game_map.buildArea (xm, ym, xm, yM, container.buildingBrush);
             container.game_map.buildArea (xm, yM, xM, yM, container.buildingBrush);
+             warning("<");
+        }
+        else if (!((x1 == xM && y1 == yM) || (x2 == xM && y2 == yM)) && is_up_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)) { //^path
+            container.game_map.buildArea (xm, yM, xm, ym, container.buildingBrush);
+            container.game_map.buildArea (xm, ym, xM, ym, container.buildingBrush);
+            warning("^");
+        }
+        else if (!((x1 == xM && y1 == yM) || (x2 == xM && y2 == yM)) && is_down_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)){ //vpath
+            container.game_map.buildArea (xm, yM, xM, yM, container.buildingBrush);
+            container.game_map.buildArea (xM, yM, xM, ym, container.buildingBrush);
+            warning("v");
         }
     }
 }
 
-public bool is_left_corner(int x1, int y1, int x2, int y2, int x, int y) {
-    int xm = int.min(x1, x2);
-    int yM = int.max(y1, y2);
-
-    return (x == xm || y == yM);
+public bool is_left_mid(double x, double y) {
+    return x > 0 && y < 1 && y > x;
 }
 
-public bool is_right_corner(int x1, int y1, int x2, int y2, int x, int y) {
-    int xM = int.max(x1, x2);
-    int ym = int.min(y1, y2);
+public bool is_right_mid(double x, double y) {
+    return x < 1 && y > 0 && y < x;
+}
 
-    return (x == xM || y == ym);
+public bool is_up_mid(double x, double y) {
+    return x > 0 && y > 0 && y < - x + 1;
+}
+
+public bool is_down_mid(double x, double y) {
+    return x < 1 && y < 1 && y > - x + 1;
 }
 
 public int bijectionX(int n, int width) {
@@ -171,6 +172,14 @@ public static int screenToIsoX (int xScreen, int yScreen, int tileHeight, int ti
 
 public static int screenToIsoY (int xScreen, int yScreen, int tileHeight, int tileWidth, int offsetX, int offsetY) {
     return (int)Math.floor (((double)(offsetX * tileHeight - xScreen * tileHeight - offsetY * tileWidth + tileWidth * yScreen)) / ((double)(2 * tileWidth * tileHeight)));
+}
+
+public static double screenToDoubleIsoX (int xScreen, int yScreen, int tileHeight, int tileWidth, int offsetX, int offsetY) {
+    return ((double)(-offsetX * tileHeight + xScreen * tileHeight - offsetY * tileWidth + tileWidth * yScreen)) / ((double)(2 * tileWidth * tileHeight));
+}
+
+public static double screenToDoubleIsoY (int xScreen, int yScreen, int tileHeight, int tileWidth, int offsetX, int offsetY) {
+    return ((double)(offsetX * tileHeight - xScreen * tileHeight - offsetY * tileWidth + tileWidth * yScreen)) / ((double)(2 * tileWidth * tileHeight));
 }
 
 /* upper corner of the tile */
