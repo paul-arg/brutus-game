@@ -12,7 +12,7 @@ public class Brutus.MainWindow : Window {
     public MainWindow (int widthInput, int heightInput) {
         title = "brutus-game";
         window_position = WindowPosition.CENTER;
-        set_default_size (850, 550);
+        set_default_size (1700, 875);
         destroy.connect (Gtk.main_quit);
 
         var grid = new Grid ();
