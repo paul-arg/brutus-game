@@ -69,7 +69,7 @@ public class Brutus.Tile : GLib.Object {
         var building_size = needed_building.size;
         if (!container.hasRoom (x, y, building_size)) {
             message (@"build : ($x, $y) : there is no room for this building.");
-        } else if (terrain == Tile.Terrain.FARMABLE && !container.farmableArea (x, y, building_size)) {
+        } else if (needed_building is Brutus.Farm && !container.farmableArea (x, y, building_size)) {
             message (@"build : ($x, $y) : farms can only be built on farmable areas.");
         } else if (!terrain.buildable ()) {
             message (@"build : ($x, $y) : this terrain is not buildable.");
