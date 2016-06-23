@@ -1,15 +1,13 @@
-using Gee;
-
 public class Brutus.GameView : Gtk.DrawingArea {
     private unowned Brutus.MainWindow container;
     public int xIsoClick;
     public int yIsoClick;
-    public List<int> mouse_path;
+    public HashTable<int, int> mouse_path;
     public bool buttonPressed = false;
 
     public GameView (MainWindow containerInput) {
         container = containerInput;
-        mouse_path = new List<int>();
+        mouse_path = new HashTable<int, int> (direct_hash, direct_equal);
         events |= Gdk.EventMask.BUTTON_PRESS_MASK;
         events |= Gdk.EventMask.BUTTON_RELEASE_MASK;
         events |= Gdk.EventMask.POINTER_MOTION_MASK;
@@ -48,6 +46,10 @@ public class Brutus.GameView : Gtk.DrawingArea {
          * message(@"    clicked at $(event.x) ,$(event.y)");
          * message(@"    clicked at iso $xIsoClick ,$yIsoClick");
          */
+
+        if (event.button == 1) {
+                buttonPressed = true;
+        }
 
         return true;
     }
@@ -90,27 +92,29 @@ public class Brutus.GameView : Gtk.DrawingArea {
         var width = get_allocated_width ();
         var height = get_allocated_height ();
         if (event.x < 5) {
-            warning ("Scroll left");
+            //warning ("Scroll left");
         } else if (width - event.x < 5) {
-            warning ("Scroll right");
+            //warning ("Scroll right");
         }
 
         if (event.y < 5) {
-            warning ("Scroll up");
+            //warning ("Scroll up");
         } else if (height - event.y < 5) {
-            warning ("Scroll down");
+            //warning ("Scroll down");
         }
 
         int candidate = screenToIsoX ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0)
             + screenToIsoY ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0) * container.game_map.mapWidth;
-            mouse_path.append (candidate);
-            warning("%d",(int)mouse_path.length() );
+        if (buttonPressed && !(mouse_path.contains(candidate))) {
+            mouse_path.insert (candidate, candidate);
+            warning("mouse_path length %d",(int)mouse_path.length );
+        }
 
 
         return true;
     }
 
-    public void L_path(List<int> list, int x1, int y1, int x2, int y2) {
+    public void L_path(HashTable<int, int> list, int x1, int y1, int x2, int y2) {
         int map_width = container.game_map.mapWidth;
         int left_counter = 0;
         int right_counter = 0;
@@ -118,24 +122,23 @@ public class Brutus.GameView : Gtk.DrawingArea {
         int xM = int.max(x1, x2);
         int ym = int.min(y1, y2);
         int yM = int.max(y1, y2);
-        foreach(int element in list) {
+        foreach(int element in list.get_keys()) {
             if (is_left_corner(x1, y1, x2, y2, bijectionX(element, map_width), bijectionY(element, map_width))) {
                 left_counter++;
-                warning("left ++");
             } else if (is_right_corner(x1, y1, x2, y2, bijectionX(element, map_width), bijectionY(element, map_width))) {
                 right_counter++;
-                warning("right ++");
             }
-            //list.remove(element);
+            warning("left %d right %d", left_counter, right_counter);
+            list.remove_all();
         }
 
-        if (right_counter > left_counter) {
+        if (right_counter >= left_counter) {
             container.game_map.buildArea (xm, ym, xM, ym, container.buildingBrush);
             container.game_map.buildArea (xM, ym, xM, yM, container.buildingBrush);
         }
         else {
             container.game_map.buildArea (xm, ym, xm, yM, container.buildingBrush);
-            container.game_map.buildArea (xm, yM, xM, ym, container.buildingBrush);
+            container.game_map.buildArea (xm, yM, xM, yM, container.buildingBrush);
         }
     }
 }
