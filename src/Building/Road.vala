@@ -118,6 +118,8 @@ public class Brutus.Road : Brutus.Building {
         } else {
             sprite = o_alone;
         }
+
+        queue_redraw ();
     }
 
     public override void build (Brutus.Tile support) {
