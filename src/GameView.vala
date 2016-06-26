@@ -4,8 +4,8 @@ public class Brutus.GameView : Gtk.DrawingArea {
     public int yIsoClick;
     public int xIsoRelease;
     public int yIsoRelease;
-    public double xDoubleIsoRelease;
-    public double yDoubleIsoRelease;
+    public double xIsoRelease_double;
+    public double yIsoRelease_double;
 
     public GameView (MainWindow containerInput) {
         container = containerInput;
@@ -41,8 +41,8 @@ public class Brutus.GameView : Gtk.DrawingArea {
     }
 
     public override bool button_press_event (Gdk.EventButton event) {
-        xIsoClick = screenToIsoX ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0);
-        yIsoClick = screenToIsoY ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0);
+        xIsoClick = (int)Math.floor (screenToIsoX (event.x, event.y));
+        yIsoClick = (int)Math.floor (screenToIsoY (event.x, event.y));
         /*
          * message(@"    clicked at $(event.x) ,$(event.y)");
          * message(@"    clicked at iso $xIsoClick ,$yIsoClick");
@@ -52,12 +52,12 @@ public class Brutus.GameView : Gtk.DrawingArea {
     }
 
     public override bool button_release_event (Gdk.EventButton event) {
-        xIsoRelease = screenToIsoX ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0);
-        yIsoRelease = screenToIsoY ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0);
-        xDoubleIsoRelease = screenToDoubleIsoX ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0);
-        yDoubleIsoRelease = screenToDoubleIsoY ((int)event.x, (int)event.y, TILE_HEIGHT, TILE_WIDTH, container.game_map.mapHeight * TILE_WIDTH, 0);
+        xIsoRelease = (int)Math.floor (screenToIsoX (event.x, event.y));
+        yIsoRelease = (int)Math.floor (screenToIsoY (event.x, event.y));
+        xIsoRelease_double = screenToIsoX (event.x, event.y);
+        yIsoRelease_double = screenToIsoY (event.x, event.y);
 
-        warning("release %f, %f", xDoubleIsoRelease, yDoubleIsoRelease);
+        warning("release %f, %f", xIsoRelease_double, yIsoRelease_double);
 
         if (container.editMode == 0) {
             if (event.button == 1) {
@@ -83,13 +83,13 @@ public class Brutus.GameView : Gtk.DrawingArea {
             }
         }
 
-        if (is_right_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)){
+        if (is_right_mid(xIsoRelease_double - xIsoRelease, yIsoRelease_double - yIsoRelease)){
             warning("right mid");}
-        if (is_left_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)){
+        if (is_left_mid(xIsoRelease_double - xIsoRelease, yIsoRelease_double - yIsoRelease)){
             warning("left mid");}
-        if (is_up_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)){
+        if (is_up_mid(xIsoRelease_double - xIsoRelease, yIsoRelease_double - yIsoRelease)){
             warning("up mid");}
-        if (is_down_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)){
+        if (is_down_mid(xIsoRelease_double - xIsoRelease, yIsoRelease_double - yIsoRelease)){
             warning("down mid");}
 
         return true;
@@ -101,6 +101,7 @@ public class Brutus.GameView : Gtk.DrawingArea {
         if (event.x < 5) {
             warning ("Scroll left");
         } else if (width - event.x < 5) {
+            warning ("Scroll right");
             warning ("Scroll right");
         }
 
@@ -119,22 +120,22 @@ public class Brutus.GameView : Gtk.DrawingArea {
         int ym = int.min(y1, y2);
         int yM = int.max(y1, y2);
 
-        if (((x1 == xM && y1 == yM) || (x2 == xM && y2 == yM)) && is_right_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)) { //>path
+        if (((x1 == xM && y1 == yM) || (x2 == xM && y2 == yM)) && is_right_mid(xIsoRelease_double - xIsoRelease, yIsoRelease_double - yIsoRelease)) { //>path
             container.game_map.buildArea (xm, ym, xM, ym, container.buildingBrush);
             container.game_map.buildArea (xM, ym, xM, yM, container.buildingBrush);
             warning(">");
         }
-        else if (((x1 == xM && y1 == yM) || (x2 == xM && y2 == yM)) && is_left_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)){ //<path
+        else if (((x1 == xM && y1 == yM) || (x2 == xM && y2 == yM)) && is_left_mid(xIsoRelease_double - xIsoRelease, yIsoRelease_double - yIsoRelease)){ //<path
             container.game_map.buildArea (xm, ym, xm, yM, container.buildingBrush);
             container.game_map.buildArea (xm, yM, xM, yM, container.buildingBrush);
              warning("<");
         }
-        else if (!((x1 == xM && y1 == yM) || (x2 == xM && y2 == yM)) && is_up_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)) { //^path
+        else if (!((x1 == xM && y1 == yM) || (x2 == xM && y2 == yM)) && is_up_mid(xIsoRelease_double - xIsoRelease, yIsoRelease_double - yIsoRelease)) { //^path
             container.game_map.buildArea (xm, yM, xm, ym, container.buildingBrush);
             container.game_map.buildArea (xm, ym, xM, ym, container.buildingBrush);
             warning("^");
         }
-        else if (!((x1 == xM && y1 == yM) || (x2 == xM && y2 == yM)) && is_down_mid(xDoubleIsoRelease - xIsoRelease, yDoubleIsoRelease - yIsoRelease)){ //vpath
+        else if (!((x1 == xM && y1 == yM) || (x2 == xM && y2 == yM)) && is_down_mid(xIsoRelease_double - xIsoRelease, yIsoRelease_double - yIsoRelease)){ //vpath
             container.game_map.buildArea (xm, yM, xM, yM, container.buildingBrush);
             container.game_map.buildArea (xM, yM, xM, ym, container.buildingBrush);
             warning("v");
@@ -166,27 +167,19 @@ public int bijectionY(int n, int width) {
     return n - (n % width);
 }
 
-public static int screenToIsoX (int xScreen, int yScreen, int tileHeight, int tileWidth, int offsetX, int offsetY) {
-    return (int)Math.floor (((double)(-offsetX * tileHeight + xScreen * tileHeight - offsetY * tileWidth + tileWidth * yScreen)) / ((double)(2 * tileWidth * tileHeight)));
-}
-
-public static int screenToIsoY (int xScreen, int yScreen, int tileHeight, int tileWidth, int offsetX, int offsetY) {
-    return (int)Math.floor (((double)(offsetX * tileHeight - xScreen * tileHeight - offsetY * tileWidth + tileWidth * yScreen)) / ((double)(2 * tileWidth * tileHeight)));
-}
-
-public static double screenToDoubleIsoX (int xScreen, int yScreen, int tileHeight, int tileWidth, int offsetX, int offsetY) {
+public static double screenToIsoX (double xScreen, double yScreen, int tileHeight = TILE_HEIGHT, int tileWidth = TILE_WIDTH, int offsetX = OFFSET_X, int offsetY = OFFSET_Y) {
     return ((double)(-offsetX * tileHeight + xScreen * tileHeight - offsetY * tileWidth + tileWidth * yScreen)) / ((double)(2 * tileWidth * tileHeight));
 }
 
-public static double screenToDoubleIsoY (int xScreen, int yScreen, int tileHeight, int tileWidth, int offsetX, int offsetY) {
+public static double screenToIsoY (double xScreen, double yScreen, int tileHeight = TILE_HEIGHT, int tileWidth = TILE_WIDTH, int offsetX = OFFSET_X, int offsetY = OFFSET_Y) {
     return ((double)(offsetX * tileHeight - xScreen * tileHeight - offsetY * tileWidth + tileWidth * yScreen)) / ((double)(2 * tileWidth * tileHeight));
 }
 
 /* upper corner of the tile */
-public static int isoToScreenX (int xIso, int yIso, int tileHeight, int tileWidth, int offsetX, int offsetY) {
+public static int isoToScreenX (int xIso, int yIso, int tileHeight = TILE_HEIGHT, int tileWidth = TILE_WIDTH, int offsetX = OFFSET_X, int offsetY = OFFSET_Y) {
     return xIso * tileWidth - yIso * tileWidth + offsetX;
 }
 
-public static int isoToScreenY (int xIso, int yIso, int tileHeight, int tileWidth, int offsetX, int offsetY) {
+public static int isoToScreenY (int xIso, int yIso, int tileHeight = TILE_HEIGHT, int tileWidth = TILE_WIDTH, int offsetX = OFFSET_X, int offsetY = OFFSET_Y) {
     return xIso * tileHeight + yIso * tileHeight + offsetY;
 }

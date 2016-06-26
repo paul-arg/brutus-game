@@ -45,7 +45,7 @@ public class Brutus.MainWindow : Window {
     public static int main (string[] args) {
         Gtk.init (ref args);
 
-        var window = new Brutus.MainWindow (20, 20);
+        var window = new Brutus.MainWindow (MAP_WIDTH, MAP_HEIGHT);
         window.show_all ();
 
         Gtk.main ();

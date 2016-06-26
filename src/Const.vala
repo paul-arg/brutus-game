@@ -1,9 +1,11 @@
+public const int MAP_WIDTH = 20;
+public const int MAP_HEIGHT = 20;
 public const int TILE_WIDTH = 45; //32
 public const int TILE_HEIGHT = 26; //18
-public const int OFFSET_X = 192;
+public const int OFFSET_X = MAP_HEIGHT*TILE_WIDTH; //192;
 public const int OFFSET_Y = 0;
 
-public const string custom_css = 
+public const string custom_css =
 """*{
 		outline:none;
 	}
@@ -13,20 +15,20 @@ public const string custom_css =
 		color: white;
 		border-color: brown;
 		border-style: outset;
-		background-image: -gtk-gradient(radial, center center , 0, center center, 1, from(rgb(196, 36, 36)), to(rgb(106, 19, 19))); 
+		background-image: -gtk-gradient(radial, center center , 0, center center, 1, from(rgb(196, 36, 36)), to(rgb(106, 19, 19)));
 		border-width: 3px;
 		border-radius: 6px;
 		box-shadow:0 2px 3px -2px black;
 		transition: 100ms background ease;
 	}
 	.panel .button:active {
-		background-image: -gtk-gradient(radial, center center , 0, center center, 1, from(rgb(106, 19, 19)), to(rgb(156, 36, 36))); 
+		background-image: -gtk-gradient(radial, center center , 0, center center, 1, from(rgb(106, 19, 19)), to(rgb(156, 36, 36)));
 		border-color: #391818;
 		border-style: inset;
 		box-shadow:0 0 3px alpha(black,0.4);
 	}
 	.panel .button:checked {
-		background-image: -gtk-gradient(radial, center center , 0, center center, 1, from(rgb(106, 19, 19)), to(rgb(156, 36, 36))); 
+		background-image: -gtk-gradient(radial, center center , 0, center center, 1, from(rgb(106, 19, 19)), to(rgb(156, 36, 36)));
 		border-color: #5F0808;
 		border-style: inset;
 		box-shadow:0 0 3px alpha(black,0.4);
@@ -40,7 +42,7 @@ public const string custom_css =
 		border:none;
 	}
 	.panel {
-		background-image: -gtk-gradient(radial, center center , 0, center center, 1, from(rgb(209, 111, 81)), to(rgb(116, 52, 33))); 
+		background-image: -gtk-gradient(radial, center center , 0, center center, 1, from(rgb(209, 111, 81)), to(rgb(116, 52, 33)));
 		border: 3px outset rgb(50, 19, 18);
 	}
 	.panel .button{
