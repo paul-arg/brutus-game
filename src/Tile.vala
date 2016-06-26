@@ -143,11 +143,45 @@ public class Brutus.Tile : GLib.Object {
                 break;
         }
 
-        cr.move_to (mapHeight * TILE_WIDTH + a, 0 + b);
-        cr.line_to (mapHeight * TILE_WIDTH + TILE_WIDTH + a, TILE_HEIGHT + b);
-        cr.line_to (mapHeight * TILE_WIDTH + a, 2 * TILE_HEIGHT + b);
-        cr.line_to (mapHeight * TILE_WIDTH - TILE_WIDTH + a, TILE_HEIGHT + b);
+        cr.move_to (mapHeight * TILE_WIDTH + a, 0 + b); //1
+        cr.line_to (mapHeight * TILE_WIDTH + TILE_WIDTH + a, TILE_HEIGHT + b); //2
+        cr.line_to (mapHeight * TILE_WIDTH + a, 2 * TILE_HEIGHT + b); //3
+        cr.line_to (mapHeight * TILE_WIDTH - TILE_WIDTH + a, TILE_HEIGHT + b); //4
         cr.line_to (mapHeight * TILE_WIDTH + a, 0 + b);
         cr.fill ();
+
+        /*cr.set_source_rgba(1, 0, 0, 0.5);
+        switch (corner_pointed) {
+            case Tile.Corner.UP :
+                cr.move_to (mapHeight * TILE_WIDTH + a, 0 + b); //1
+                cr.line_to (mapHeight * TILE_WIDTH + TILE_WIDTH + a, TILE_HEIGHT + b); //2
+                cr.line_to (mapHeight * TILE_WIDTH - TILE_WIDTH + a, TILE_HEIGHT + b); //4
+                cr.line_to (mapHeight * TILE_WIDTH + a, 0 + b); //1
+                cr.fill ();
+                break;
+            case Tile.Corner.DOWN :
+                cr.move_to (mapHeight * TILE_WIDTH - TILE_WIDTH + a, TILE_HEIGHT + b); //4
+                cr.line_to (mapHeight * TILE_WIDTH + TILE_WIDTH + a, TILE_HEIGHT + b); //2
+                cr.line_to (mapHeight * TILE_WIDTH + a, 2 * TILE_HEIGHT + b); //3
+                cr.line_to (mapHeight * TILE_WIDTH - TILE_WIDTH + a, TILE_HEIGHT + b); //4
+                cr.fill ();
+                break;
+            case Tile.Corner.LEFT :
+                cr.move_to (mapHeight * TILE_WIDTH + a, 0 + b); //1
+                cr.line_to (mapHeight * TILE_WIDTH - TILE_WIDTH + a, TILE_HEIGHT + b); //4
+                cr.line_to (mapHeight * TILE_WIDTH + a, 2 * TILE_HEIGHT + b); //3
+                cr.line_to (mapHeight * TILE_WIDTH + a, 0 + b); //1
+                cr.fill ();
+                break;
+            case Tile.Corner.RIGHT :
+                cr.move_to (mapHeight * TILE_WIDTH + a, 0 + b); //1
+                cr.line_to (mapHeight * TILE_WIDTH + TILE_WIDTH + a, TILE_HEIGHT + b); //2
+                cr.line_to (mapHeight * TILE_WIDTH + a, 2 * TILE_HEIGHT + b); //3
+                cr.line_to (mapHeight * TILE_WIDTH + a, 0 + b); //1
+                cr.fill ();
+                break;
+            default :
+                return;
+         }*/
     }
 }
