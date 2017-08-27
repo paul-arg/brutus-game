@@ -1,5 +1,5 @@
 # Brutus
-![Brutus Icon](https://raw.githubusercontent.com/pologram/brutus-game/blob/master/data/icons/64x64/brutus.svg)
+![Brutus Icon](https://raw.githubusercontent.com/paul-arg/brutus-game/master/data/icons/64x64/brutus.svg)
 This is a City-Building (Caesar3-like) game under development.
 ---
 ## How to
