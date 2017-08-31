@@ -5,6 +5,8 @@ public const int TILE_HEIGHT = 26; //18
 public const int OFFSET_X = MAP_HEIGHT*TILE_WIDTH; //192;
 public const int OFFSET_Y = 0;
 
+public const int BONJOUR = 2;
+
 public const string custom_css =
 """*{
 		outline:none;
