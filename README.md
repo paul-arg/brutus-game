@@ -14,4 +14,4 @@ This is a City-Building (Caesar3-like) game under development.
 ### use
 For now you can only add/remove tiles and build/destroy buildings.
 
-Left click for construction and right click for destruction. You can edit a whole area with mouse down & drag. OKok
+Left click for construction and right click for destruction. You can edit a whole area with mouse down & drag. OK
